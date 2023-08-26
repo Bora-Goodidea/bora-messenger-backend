@@ -24,6 +24,9 @@
     "npm": "please-use-yarn"
   },
   "scripts": {
+    "start:dev": "cp ./project/develop.environment.env .env && nodemon --exec ts-node -r tsconfig-paths/register --files src/App.ts -e ts",
+    "start:proud": "cp ./project/production.environment.env .env && nodemon --exec ts-node -r tsconfig-paths/register --files src/App.ts -e ts",
+    "clean": "rm -rf build",
     "build": "yarn build:compile && yarn build:types",
     "build:compile": "npx babel src --extensions .ts --out-dir build --source-maps",
     "build:types": "tsc",
@@ -34,8 +37,13 @@
     "prepare": "husky install"
   },
   "dependencies": {
+    "@types/express": "4.17.17",
     "compression": "1.7.4",
-    "husky": "^8.0.3"
+    "dotenv": "16.3.1",
+    "express": "4.18.2",
+    "fs": "0.0.1-security",
+    "husky": "^8.0.3",
+    "lodash": "4.17.21"
   },
   "devDependencies": {
     "@babel/cli": "7.22.10",
@@ -48,6 +56,7 @@
     "@babel/runtime": "7.22.11",
     "@commitlint/cli": "17.7.1",
     "@commitlint/config-conventional": "17.7.0",
+    "@types/lodash": "4.14.197",
     "@types/node": "^20.5.6",
     "@typescript-eslint/eslint-plugin": "6.4.1",
     "@typescript-eslint/parser": "6.4.1",
@@ -61,6 +70,7 @@
     "eslint-plugin-node": "11.1.0",
     "eslint-plugin-prettier": "5.0.0",
     "eslint-plugin-promise": "6.1.1",
+    "nodemon": "3.0.1",
     "prettier": "^3.0.2",
     "source-map-support": "0.5.21",
     "typescript": "^5.1.6"
