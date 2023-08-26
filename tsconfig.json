@@ -18,7 +18,9 @@
       "@Routes/*": ["Route/*"],
       "@Controllers/*": ["Controller/*"],
       "@Config": ["Common/Config"],
-      "@Logger": ["Common/Logger"]
+      "@Logger": ["Common/Logger"],
+      "@Messages": ["Common/Messages"],
+      "@Const": ["Common/Const"]
     }
   }
 }

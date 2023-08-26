@@ -1,6 +1,6 @@
 import { Application } from 'express'
-import { TestsRouter } from '../Routes/Api'
-import Config from 'Common/Config'
+import { TestsRouter } from '@Routes/Api'
+import Config from '@Config'
 import _ from 'lodash'
 import fs from 'fs'
 
