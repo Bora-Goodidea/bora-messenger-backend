@@ -1,26 +1,26 @@
 {
-  "compilerOptions": {
-    "target": "es2016",
-    "module": "commonjs",
-    "rootDir": "./src",
-    "moduleResolution": "node",
-    "baseUrl": "./src",
-    "declaration": true,
-    "emitDeclarationOnly": true,
-    "outDir": "./build",
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "skipLibCheck": true,
-    "paths": {
-      "@Commons/*": ["Common/*"],
-      "@Servers/*": ["Server/*"],
-      "@Routes/*": ["Route/*"],
-      "@Controllers/*": ["Controller/*"],
-      "@Config": ["Common/Config"],
-      "@Logger": ["Common/Logger"],
-      "@Messages": ["Common/Messages"],
-      "@Const": ["Common/Const"]
+    "compilerOptions": {
+        "target": "es2016",
+        "module": "commonjs",
+        "rootDir": "./src",
+        "moduleResolution": "node",
+        "baseUrl": "./src",
+        "declaration": true,
+        "emitDeclarationOnly": true,
+        "outDir": "./build",
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "strict": true,
+        "skipLibCheck": true,
+        "paths": {
+            "@Commons/*": ["Common/*"],
+            "@Servers/*": ["Server/*"],
+            "@Routes/*": ["Route/*"],
+            "@Controllers/*": ["Controller/*"],
+            "@Config": ["Common/Config"],
+            "@Logger": ["Common/Logger"],
+            "@Messages": ["Common/Messages"],
+            "@Const": ["Common/Const"]
+        }
     }
-  }
 }

@@ -3,5 +3,5 @@ import * as Server from '@Servers/Server'
 
 const app: Application = express()
 
-Server.initServer(app)
+Server.initServer(app, __dirname)
 Server.startServer(app)
