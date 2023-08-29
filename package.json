@@ -46,7 +46,9 @@
         "husky": "^8.0.3",
         "lodash": "4.17.21",
         "path": "0.12.7",
-        "pug": "3.0.2"
+        "pug": "3.0.2",
+        "reflect-metadata": "0.1.13",
+        "typeorm": "0.3.17"
     },
     "devDependencies": {
         "@babel/cli": "7.22.10",
