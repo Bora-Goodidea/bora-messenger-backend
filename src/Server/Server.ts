@@ -5,6 +5,7 @@ import Config from '@Config'
 import _ from 'lodash'
 import fs from 'fs'
 import path from 'path'
+import { Logger } from '@Commons/Logger'
 
 export const checkEnvironment = (): { state: boolean; message: string } => {
     const notFound: string[] = []
@@ -49,7 +50,7 @@ const addRouters = (app: Application): void => {
 }
 
 // 서버 초기화 설정.
-export function initServer(app: Application, Path: string): void {
+export const initServer = (app: Application, Path: string): void => {
     app.set('view engine', 'pug')
     app.set('views', path.join(Path, 'Resources/view'))
     app.use(express.static(path.join(Path, 'Resources/public')))
@@ -60,10 +61,16 @@ export function initServer(app: Application, Path: string): void {
 }
 
 // 서버 시작.
-export function startServer(app: Application): void {
+export const startServer = (app: Application): void => {
     const port = Config.PORT
     const appName = Config.APP_NAME
     const appEnv = Config.APP_ENV
 
-    app.listen(port, () => console.debug(`\nExpress :: ${appName} ${appEnv} :: running on port ${port}\n`, null, true))
+    app.listen(port, () =>
+        Logger.info(
+            `\n\nRunning Name  - ${appName}\nRunning Environment - ${appEnv}\nRunning on port - ${port}\n:: Server Start Success ::`,
+            null,
+            true,
+        ),
+    )
 }
