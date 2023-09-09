@@ -29,6 +29,7 @@
         "clean": "rm -rf build",
         "build": "yarn build:compile && yarn build:types",
         "build:compile": "npx babel src --extensions .ts --out-dir build --source-maps",
+        "build:dev": "cp ./project/develop.environment.env .env && rm -rf build && yarn build:compile && yarn build:types && cp -rf ./src/Resources build",
         "build:types": "tsc",
         "prettier": "prettier --write \"src/**/*.ts\"",
         "prettier:check": "prettier --check \"src/**/*.ts\"",
