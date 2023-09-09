@@ -5,7 +5,7 @@ import Messages from '@Messages'
 const { httpStatus } = Const
 
 // 기본 내용없음.
-export const NoCotentResponse = (response: Response): Response => {
+export const NoContentResponse = (response: Response): Response => {
     return response.status(httpStatus.noContent).json()
 }
 
