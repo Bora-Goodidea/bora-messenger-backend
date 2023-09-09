@@ -26,6 +26,7 @@
     "scripts": {
         "start:dev": "cp ./project/develop.environment.env .env && nodemon --exec ts-node -r tsconfig-paths/register --files src/App.ts -e ts",
         "start:proud": "cp ./project/production.environment.env .env && nodemon --exec ts-node -r tsconfig-paths/register --files src/App.ts -e ts",
+        "start:server": "node build/App.js",
         "clean": "rm -rf build",
         "build": "yarn build:compile && yarn build:types",
         "build:compile": "npx babel src --extensions .ts --out-dir build --source-maps",
