@@ -1,11 +1,14 @@
 import express, { Application } from 'express'
-import { TestsRouter } from '@Routes/Api'
+import { SystemRouter, TestsRouter } from '@Routes/Api'
 import { WebRouter } from '@Routes/Web'
 import Config from '@Config'
 import _ from 'lodash'
 import fs from 'fs'
 import path from 'path'
-import { Logger } from '@Commons/Logger'
+import cors from 'cors'
+import { AccessLogStream, Logger } from '@Commons/Logger'
+import morgan from 'morgan'
+import { RestDefaultMiddleware } from 'Middleware/RestDefaultMiddleware'
 
 export const checkEnvironment = (): { state: boolean; message: string } => {
     const notFound: string[] = []
@@ -46,6 +49,8 @@ const addRouters = (app: Application): void => {
     const baseApiRoute = '/api'
 
     app.use(`${baseApiRoute}/tests`, TestsRouter)
+    app.use(`${baseApiRoute}/system`, RestDefaultMiddleware, SystemRouter)
+
     app.use(`/`, WebRouter)
 }
 
@@ -55,6 +60,19 @@ export const initServer = (app: Application, Path: string): void => {
     app.set('views', path.join(Path, 'Resources/view'))
     app.use(express.static(path.join(Path, 'Resources/public')))
 
+    app.use(
+        cors({
+            origin: '*',
+        }),
+    )
+    app.use(express.json())
+    app.use(express.urlencoded({ extended: true }))
+
+    app.use(
+        morgan(':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length]', {
+            stream: AccessLogStream,
+        }),
+    )
     addRouters(app)
 
     return
