@@ -1,5 +1,5 @@
 import express, { Application } from 'express'
-import { SystemRouter, TestsRouter } from '@Routes/Api'
+import { AuthRouter, SystemRouter, TestsRouter } from '@Routes/Api'
 import { WebRouter } from '@Routes/Web'
 import Config from '@Config'
 import _ from 'lodash'
@@ -50,6 +50,7 @@ const addRouters = (app: Application): void => {
 
     app.use(`${baseApiRoute}/tests`, TestsRouter)
     app.use(`${baseApiRoute}/system`, RestDefaultMiddleware, SystemRouter)
+    app.use(`${baseApiRoute}/auth`, RestDefaultMiddleware, AuthRouter)
 
     app.use(`/`, WebRouter)
 }
