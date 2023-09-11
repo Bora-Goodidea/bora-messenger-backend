@@ -20,6 +20,7 @@
             "@Servers/*": ["Server/*"],
             "@Routes/*": ["Route/*"],
             "@Controllers/*": ["Controller/*"],
+            "@Middlewares/*": ["Middleware/*"],
             "@Config": ["Common/Config"],
             "@Logger": ["Common/Logger"],
             "@Messages": ["Common/Messages"],

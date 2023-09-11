@@ -30,18 +30,19 @@ module.exports = function (api) {
             {
                 root: ['./src'],
                 alias: {
-                    '@Commons/*': './src/Common/*',
-                    '@Servers/*': './src/Server/*',
-                    '@Routes/*': './src/Route/*',
-                    '@Controllers/*': './src/Controller/*',
+                    '@Commons': './src/Common',
+                    '@Servers': './src/Server',
+                    '@Routes': './src/Route',
+                    '@Controllers': './src/Controller',
+                    '@Middlewares': './src/Middleware',
                     '@Config': './src/Common/Config',
                     '@Logger': './src/Common/Logger',
                     '@Messages': './src/Common/Messages',
                     '@Const': './src/Common/Const',
                     '@Codes': './src/Common/Codes',
-                    '@Database/*': './src/Database/*',
-                    '@Entity/*': './src/Database/Entities/*',
-                    '@Service/*': './src/Database/Service/*'
+                    '@Database': './src/Database',
+                    '@Entity': './src/Database/Entities',
+                    '@Service': './src/Database/Service'
                 },
             },
         ],

@@ -8,7 +8,7 @@ import path from 'path'
 import cors from 'cors'
 import { AccessLogStream, Logger } from '@Commons/Logger'
 import morgan from 'morgan'
-import { RestDefaultMiddleware } from 'Middleware/RestDefaultMiddleware'
+import { RestDefaultMiddleware } from '@Middlewares/RestDefaultMiddleware'
 
 export const checkEnvironment = (): { state: boolean; message: string } => {
     const notFound: string[] = []
