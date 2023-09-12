@@ -1,0 +1,12 @@
+html
+    head
+        title #{env.APP_NAME}
+        block scripts
+            script(src='https://cdn.tailwindcss.com')
+    body
+        block content
+        block foot
+            #footer
+                section(class="mb-32 text-gray-800 text-center")
+                    div(class="flex flex-wrap justify-center")
+                        p #{env.APP_NAME}

@@ -1,0 +1,17 @@
+extends layout
+
+block content
+
+    div(class="container my-24 px-6 mx-auto")
+
+        section(class="mb-32 text-gray-800 text-center")
+            div(class="flex flex-wrap justify-center")
+                div(class="grow-0 shrink-0 basis-auto w-full lg:w-7/12 px-3")
+                    div(class="mb-12")
+                        h2(class="text-sm font-bold mb-6") Welcome To #{env.APP_NAME}
+                            p(class="text-gray-500 mb-6 text-2xl mt-10") 처리 결과: #{message}
+                    div(class="mb-12")
+                        p(class="text-gray-500 mb-6 text-1xl mt-10") #{subMessage}
+
+
+
