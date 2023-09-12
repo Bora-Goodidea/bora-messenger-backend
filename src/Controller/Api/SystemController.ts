@@ -4,13 +4,13 @@ import AppDataSource from '@Database/AppDataSource'
 import { Codes } from '@Entity/Codes'
 
 // 서버 체크
-export const CheckStatus = async (req: Request, res: Response): Promise<void> => {
-    NoContentResponse(res)
+export const CheckStatus = async (req: Request, res: Response): Promise<Response> => {
+    return NoContentResponse(res)
 }
 
 // 기본 데이터
-export const BaseData = async (req: Request, res: Response): Promise<void> => {
-    const dataSource = await AppDataSource
+export const BaseData = async (req: Request, res: Response): Promise<Response> => {
+    const dataSource = AppDataSource
 
     let resultCodeStep1 = {}
 
@@ -28,5 +28,5 @@ export const BaseData = async (req: Request, res: Response): Promise<void> => {
         })
     }
 
-    SuccessResponse(res, { code: { step1: resultCodeStep1 } })
+    return SuccessResponse(res, { code: { step1: resultCodeStep1 } })
 }
