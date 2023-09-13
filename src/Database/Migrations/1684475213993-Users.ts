@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner, Table, TableForeignKey, TableIndex } from 'typeorm'
+import { MigrationInterface, QueryRunner, Table, TableForeignKey, TableIndex } from 'typeorm';
 
 export class Users1684475213993 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
@@ -70,7 +70,7 @@ export class Users1684475213993 implements MigrationInterface {
                 ],
             }),
             true,
-        )
+        );
 
         await queryRunner.createForeignKey(
             'users',
@@ -81,7 +81,7 @@ export class Users1684475213993 implements MigrationInterface {
                 onDelete: 'SET NULL',
                 onUpdate: 'CASCADE',
             }),
-        )
+        );
 
         await queryRunner.createForeignKey(
             'users',
@@ -92,7 +92,7 @@ export class Users1684475213993 implements MigrationInterface {
                 onDelete: 'SET NULL',
                 onUpdate: 'CASCADE',
             }),
-        )
+        );
 
         await queryRunner.createForeignKey(
             'users',
@@ -103,7 +103,7 @@ export class Users1684475213993 implements MigrationInterface {
                 onDelete: 'SET NULL',
                 onUpdate: 'CASCADE',
             }),
-        )
+        );
 
         await queryRunner.createIndex(
             'users',
@@ -112,7 +112,7 @@ export class Users1684475213993 implements MigrationInterface {
                 columnNames: ['email'],
                 isUnique: true,
             }),
-        )
+        );
 
         await queryRunner.createIndex(
             'users',
@@ -121,13 +121,13 @@ export class Users1684475213993 implements MigrationInterface {
                 columnNames: ['nickname'],
                 isUnique: true,
             }),
-        )
+        );
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        const table = await queryRunner.getTable('users')
+        const table = await queryRunner.getTable('users');
         if (table) {
-            await queryRunner.dropTable('users')
+            await queryRunner.dropTable('users');
         }
     }
 }

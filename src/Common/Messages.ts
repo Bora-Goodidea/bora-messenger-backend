@@ -9,4 +9,4 @@ export default {
     success: {
         default: `정상 처리 하였습니다.`,
     },
-}
+};

@@ -3,37 +3,37 @@
  * @param email
  */
 export const emailValidator = (email: string): boolean => {
-    const mailFormat = /\S+@\S+\.\S+/
-    return !!email.match(mailFormat)
-}
+    const mailFormat = /\S+@\S+\.\S+/;
+    return !!email.match(mailFormat);
+};
 
 /**
  * mysql timestamp 변환
  * @param inputDate
  */
 export const toMySqlDatetime = (inputDate: Date): string => {
-    const date = new Date(inputDate)
-    const dateWithOffest = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
-    return dateWithOffest.toISOString().slice(0, 19).replace('T', ' ')
-}
+    const date = new Date(inputDate);
+    const dateWithOffest = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+    return dateWithOffest.toISOString().slice(0, 19).replace('T', ' ');
+};
 
 /**
  * 확장자 리턴
  * @param filename
  */
 export const getFileExtension = (filename: string) => {
-    const ext = /^.+\.([^.]+)$/.exec(filename)
-    return ext == null ? '' : ext[1]
-}
+    const ext = /^.+\.([^.]+)$/.exec(filename);
+    return ext == null ? '' : ext[1];
+};
 
 /**
  * 랜덤 문자열
  */
 export const generateRandomLetter = () => {
-    const alphabet = 'abcdefghijklmnopqrstuvwxyz0123456789'
+    const alphabet = 'abcdefghijklmnopqrstuvwxyz0123456789';
 
-    return alphabet[Math.floor(Math.random() * alphabet.length)]
-}
+    return alphabet[Math.floor(Math.random() * alphabet.length)];
+};
 
 /**
  * mysql datetime 변환
@@ -42,44 +42,44 @@ export const generateRandomLetter = () => {
 export const changeMysqlDate = (
     date: string,
 ): {
-    origin: Date
+    origin: Date;
     number: {
-        year: number
-        month: number
-        date: number
-        day: number
-        hour: number
-        minutes: number
-        seconds: number
-    }
+        year: number;
+        month: number;
+        date: number;
+        day: number;
+        hour: number;
+        minutes: number;
+        seconds: number;
+    };
     string: {
-        year: string
-        month: string
-        date: string
-        day: string
-        hour: string
-        minutes: string
-        seconds: string
-    }
+        year: string;
+        month: string;
+        date: string;
+        day: string;
+        hour: string;
+        minutes: string;
+        seconds: string;
+    };
     format: {
-        step1: string
-        step2: string
-        step3: string
-        step4: string
-        sinceString: string
-    }
+        step1: string;
+        step2: string;
+        step3: string;
+        step4: string;
+        sinceString: string;
+    };
 } => {
-    const days = ['일', '월', '화', '수', '목', '금', '토']
+    const days = ['일', '월', '화', '수', '목', '금', '토'];
 
-    const convertDate = new Date(date)
+    const convertDate = new Date(date);
 
-    const dateYear = convertDate.getFullYear()
-    const dateMonth = convertDate.getMonth()
-    const dateDate = convertDate.getDate()
-    const dateDay = convertDate.getDay()
-    const dateHour = convertDate.getHours()
-    const dateMinutes = convertDate.getMinutes()
-    const dateSeconds = convertDate.getSeconds()
+    const dateYear = convertDate.getFullYear();
+    const dateMonth = convertDate.getMonth();
+    const dateDate = convertDate.getDate();
+    const dateDay = convertDate.getDay();
+    const dateHour = convertDate.getHours();
+    const dateMinutes = convertDate.getMinutes();
+    const dateSeconds = convertDate.getSeconds();
 
     return {
         origin: convertDate,
@@ -118,8 +118,8 @@ export const changeMysqlDate = (
             )}:${String(dateMinutes).padStart(2, '0')}`,
             sinceString: timeSince(convertDate),
         },
-    }
-}
+    };
+};
 
 /**
  * 날싸를 이용 since 타일 변경
@@ -133,24 +133,24 @@ export const timeSince = (date: Date): string => {
         { label: '시간', seconds: 3600 },
         { label: '분', seconds: 60 },
         { label: '초', seconds: 1 },
-    ]
+    ];
 
-    const seconds = Math.floor((Date.now() - date.getTime()) / 1000)
-    const interval = intervals.find((i) => i.seconds < seconds)
+    const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
+    const interval = intervals.find((i) => i.seconds < seconds);
 
     if (interval) {
-        const count = Math.floor(seconds / interval.seconds)
-        return `${count}${interval.label}${count !== 1 ? '' : ''} 전`
+        const count = Math.floor(seconds / interval.seconds);
+        return `${count}${interval.label}${count !== 1 ? '' : ''} 전`;
     }
 
-    return `알수 없음`
-}
+    return `알수 없음`;
+};
 /**
  * 콤마 추가
  * @param num
  */
 export const addComma = (num: number): string => {
-    if (isNaN(num)) return ''
-    const regexp = /\B(?=(\d{3})+(?!\d))/g
-    return num.toString().replace(regexp, ',')
-}
+    if (isNaN(num)) return '';
+    const regexp = /\B(?=(\d{3})+(?!\d))/g;
+    return num.toString().replace(regexp, ',');
+};

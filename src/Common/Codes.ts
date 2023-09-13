@@ -18,4 +18,4 @@ export default [
             { id: `030`, name: `block 상태` },
         ],
     },
-]
+];

@@ -1,11 +1,11 @@
-'use strict'
+'use strict';
 /**
  babel.config.js with useful plugins.
  */
 module.exports = function (api) {
-    api.cache(true)
+    api.cache(true);
 
-    const presets = ['@babel/preset-env', '@babel/preset-typescript']
+    const presets = ['@babel/preset-env', '@babel/preset-typescript'];
     const plugins = [
         '@babel/plugin-transform-runtime',
         [
@@ -57,10 +57,10 @@ module.exports = function (api) {
             },
         ],
         'source-map-support',
-    ]
+    ];
 
     return {
         presets,
         plugins,
-    }
-}
+    };
+};

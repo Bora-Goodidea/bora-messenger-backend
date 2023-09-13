@@ -1,7 +1,7 @@
-import dotenv from 'dotenv'
-import * as process from 'process'
+import dotenv from 'dotenv';
+import * as process from 'process';
 
-dotenv.config()
+dotenv.config();
 
 export default {
     APP_NAME: process.env.APP_NAME,
@@ -29,4 +29,4 @@ export default {
     SFTP_FILE_DEST_PATH_ROOT: process.env.SFTP_FILE_DEST_PATH_ROOT,
     SFTP_FILE_DEST_PATH: process.env.SFTP_FILE_DEST_PATH,
     MEDIA_HOSTNAME: process.env.MEDIA_HOSTNAME,
-}
+};

@@ -1,6 +1,6 @@
-import winston from 'winston'
-import Config from '@Config'
-import fs from 'fs'
+import winston from 'winston';
+import Config from '@Config';
+import fs from 'fs';
 
 const logLevels = {
     levels: {
@@ -19,14 +19,14 @@ const logLevels = {
         sql: 'blue',
         debug: 'gray',
     },
-}
+};
 
-const logYear = new Date().getFullYear()
-const logMonth = ('00' + (new Date().getMonth() + 1).toString()).slice(-2)
-const logDay = ('00' + new Date().getDate().toString()).slice(-2)
-const logHour = ('00' + new Date().getHours().toString()).slice(-2)
-const logMinute = ('00' + new Date().getMinutes().toString()).slice(-2)
-const logSec = ('00' + new Date().getSeconds().toString()).slice(-2)
+const logYear = new Date().getFullYear();
+const logMonth = ('00' + (new Date().getMonth() + 1).toString()).slice(-2);
+const logDay = ('00' + new Date().getDate().toString()).slice(-2);
+const logHour = ('00' + new Date().getHours().toString()).slice(-2);
+const logMinute = ('00' + new Date().getMinutes().toString()).slice(-2);
+const logSec = ('00' + new Date().getSeconds().toString()).slice(-2);
 
 /**
  * The logger service wrapper.
@@ -37,9 +37,9 @@ const logger = winston.createLogger({
         winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
         winston.format.align(),
         winston.format.printf((info) => {
-            const { timestamp, level, message, ...extra } = info
+            const { timestamp, level, message, ...extra } = info;
 
-            return `${timestamp} [${level}]: ${message} ${Object.keys(extra).length ? JSON.stringify(extra, null, 2) : ''}`
+            return `${timestamp} [${level}]: ${message} ${Object.keys(extra).length ? JSON.stringify(extra, null, 2) : ''}`;
         }),
     ),
     transports: [
@@ -63,12 +63,12 @@ const logger = winston.createLogger({
             },
         }),
     ],
-})
+});
 
 /**
  * A console only logger.
  */
-winston.addColors(logLevels.colors)
+winston.addColors(logLevels.colors);
 const consoleLogger = winston.createLogger({
     // format: winston.format.combine(winston.format.colorize(), winston.format.timestamp(), winston.format.json()),
 
@@ -77,9 +77,9 @@ const consoleLogger = winston.createLogger({
         winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
         winston.format.align(),
         winston.format.printf((info) => {
-            const { timestamp, level, message, ...extra } = info
+            const { timestamp, level, message, ...extra } = info;
 
-            return `${timestamp} [${level}]: ${message} ${Object.keys(extra).length ? JSON.stringify(extra, null, 2) : ''}`
+            return `${timestamp} [${level}]: ${message} ${Object.keys(extra).length ? JSON.stringify(extra, null, 2) : ''}`;
         }),
     ),
     transports: [
@@ -87,7 +87,7 @@ const consoleLogger = winston.createLogger({
             level: 'silly' /* error, warn, info, verbose, debug & silly logs will be logged to console. */,
         }),
     ],
-})
+});
 
 /**
  * The logging service that includes functionalities to log any error, info or warnings.
@@ -99,8 +99,8 @@ export class Logger {
      * @param error The Error object to log its stack if it was an exception.
      */
     public static error(message: string, error?: Error): void {
-        const meta = { stack: error ? error.stack : '' }
-        logger.error(message, error ? meta : null)
+        const meta = { stack: error ? error.stack : '' };
+        logger.error(message, error ? meta : null);
     }
 
     /**
@@ -109,7 +109,7 @@ export class Logger {
      * @param meta An optional additional warning data.
      */
     public static warn(message: string, meta?: unknown): void {
-        logger.warn(message, meta)
+        logger.warn(message, meta);
     }
 
     /**
@@ -120,11 +120,11 @@ export class Logger {
      * Could be used to keep sensitive data safe from being logged to the console.
      */
     public static info(message: string, meta?: unknown, logToConsole?: boolean): void {
-        logger.info(message, meta)
+        logger.info(message, meta);
 
         /* Make sure if it safe to log this info to the console. */
         if (logToConsole && Config.APP_ENV !== 'production') {
-            consoleLogger.info(message, meta)
+            consoleLogger.info(message, meta);
         }
     }
 
@@ -135,9 +135,9 @@ export class Logger {
      */
     public static console(message: string, meta?: unknown): void {
         if (Config.APP_ENV === 'production') {
-            logger.info(`console log: ${message}`, meta)
+            logger.info(`console log: ${message}`, meta);
         } else {
-            consoleLogger.info(message, meta)
+            consoleLogger.info(message, meta);
         }
     }
 }
@@ -145,6 +145,6 @@ export class Logger {
 /**
  * morgan log
  */
-export const AccessLogStream = fs.createWriteStream(`storage/logs/${logYear}${logMonth}/${logYear}-${logMonth}-${logDay}-access.log`, { flags: 'a' })
+export const AccessLogStream = fs.createWriteStream(`storage/logs/${logYear}${logMonth}/${logYear}-${logMonth}-${logDay}-access.log`, { flags: 'a' });
 
-export const LogDateTime = () => `${logYear}-${logMonth}-${logDay} ${logHour}:${logMinute}:${logSec}`
+export const LogDateTime = () => `${logYear}-${logMonth}-${logDay} ${logHour}:${logMinute}:${logSec}`;

@@ -1,7 +1,7 @@
-import mysql from 'mysql2/promise'
-import dotenv from 'dotenv'
+import mysql from 'mysql2/promise';
+import dotenv from 'dotenv';
 
-dotenv.config()
+dotenv.config();
 
 export default mysql.createPool({
     host: process.env.MYSQL_HOST,
@@ -11,4 +11,4 @@ export default mysql.createPool({
     database: process.env.MYSQL_DATABASE,
     connectTimeout: 5000,
     connectionLimit: 30, //default 10
-})
+});

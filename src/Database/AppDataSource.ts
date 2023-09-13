@@ -1,9 +1,9 @@
-import 'reflect-metadata'
-import { DataSource } from 'typeorm'
-import dotenv from 'dotenv'
-import { Logger } from '@Logger'
+import 'reflect-metadata';
+import { DataSource } from 'typeorm';
+import dotenv from 'dotenv';
+import { Logger } from '@Logger';
 
-dotenv.config()
+dotenv.config();
 
 const AppDataSource = new DataSource({
     type: 'mysql',
@@ -17,13 +17,13 @@ const AppDataSource = new DataSource({
     entities: [__dirname + '/Entities/*.{ts,js}'],
     migrations: [__dirname + '/Migrations/*.{ts,js}'],
     subscribers: [],
-})
+});
 
 AppDataSource.initialize()
     .then(() => {
-        Logger.console('Data Source has been initialized!')
+        Logger.console('Data Source has been initialized!');
     })
     .catch((err) => {
-        Logger.error('Error during Data Source initialization', err)
-    })
-export default AppDataSource
+        Logger.error('Error during Data Source initialization', err);
+    });
+export default AppDataSource;

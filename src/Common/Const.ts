@@ -10,4 +10,4 @@ export default {
         noContent: 204,
     },
     defaultPerPage: 5,
-}
+};

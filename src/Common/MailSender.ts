@@ -1,6 +1,6 @@
-import nodemailer from 'nodemailer'
-import Config from '@Config'
-import { Logger } from '@Logger'
+import nodemailer from 'nodemailer';
+import Config from '@Config';
+import { Logger } from '@Logger';
 
 const MailSender = {
     // 메일발송 함수
@@ -15,11 +15,11 @@ const MailSender = {
                 user: Config.GMAIL_USER,
                 pass: Config.GMAIL_PASSWORD,
             },
-        })
+        });
 
         const serviceLink = Config.PORT
             ? `${Config.HOSTNAME}:${Config.PORT}/web/auth/emailauth/${EmailAuthCode}`
-            : `${Config.HOSTNAME}/web/auth/emailauth/${EmailAuthCode}`
+            : `${Config.HOSTNAME}/web/auth/emailauth/${EmailAuthCode}`;
 
         // 메일 옵션
         const mailOptions = {
@@ -30,16 +30,16 @@ const MailSender = {
             html: `<b>아래 링크를 클릭해서 이메일 인증을 완료해 주세요.</b><br /><br />
             <a href="${serviceLink}">클릭.</a>
             `,
-        }
+        };
         // 메일 발송
         transporter.sendMail(mailOptions, function (error, info) {
             if (error) {
-                Logger.error(JSON.stringify(error))
+                Logger.error(JSON.stringify(error));
             } else {
-                Logger.info('Email sent: ' + info.response)
+                Logger.info('Email sent: ' + info.response);
             }
-        })
+        });
     },
-}
+};
 
-export default MailSender
+export default MailSender;

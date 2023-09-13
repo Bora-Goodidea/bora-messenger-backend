@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner, Table, TableIndex } from 'typeorm'
+import { MigrationInterface, QueryRunner, Table, TableIndex } from 'typeorm';
 
 export class Codes1683873754604 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
@@ -47,7 +47,7 @@ export class Codes1683873754604 implements MigrationInterface {
                 ],
             }),
             true,
-        )
+        );
 
         await queryRunner.createIndex(
             'codes',
@@ -55,13 +55,13 @@ export class Codes1683873754604 implements MigrationInterface {
                 name: 'IDX_CODES_CODE_ID',
                 columnNames: ['code_id'],
             }),
-        )
+        );
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        const table = await queryRunner.getTable('codes')
+        const table = await queryRunner.getTable('codes');
         if (table) {
-            await queryRunner.dropTable('codes')
+            await queryRunner.dropTable('codes');
         }
     }
 }

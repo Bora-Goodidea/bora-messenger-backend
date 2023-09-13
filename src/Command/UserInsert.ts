@@ -1,13 +1,13 @@
 #!/usr/bin/env node
-import MysqlConnect from '@Database/MysqlConnect'
-import bcrypt from 'bcrypt'
-import Config from '@Config'
-import { exit } from 'node:process'
-import { Logger } from '@Commons/Logger'
+import MysqlConnect from '@Database/MysqlConnect';
+import bcrypt from 'bcrypt';
+import Config from '@Config';
+import { exit } from 'node:process';
+import { Logger } from '@Commons/Logger';
 
-console.debug(`######################################################################`)
-;(async () => {
-    const conn = await MysqlConnect.getConnection()
+console.debug(`######################################################################`);
+(async () => {
+    const conn = await MysqlConnect.getConnection();
     const [result] = await conn.query(
         `insert into users 
                 (type, level, status, email, password, nickname, email_verified_at, updated_at, created_at) 
@@ -18,14 +18,14 @@ console.debug(`#################################################################
                     Number(Config.BCRYPT_SALT),
                 )}', 'bora', now(), now(), now()
              );`,
-    )
+    );
     if (!result) {
-        Logger.error('seed insert error...')
-        exit()
+        Logger.error('seed insert error...');
+        exit();
     } else {
-        Logger.info('success........')
+        Logger.info('success........');
     }
 
-    console.debug(`######################################################################`)
-    exit()
-})()
+    console.debug(`######################################################################`);
+    exit();
+})();
