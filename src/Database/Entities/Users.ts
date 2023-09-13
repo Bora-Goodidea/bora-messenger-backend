@@ -1,5 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, OneToOne, JoinTable } from 'typeorm';
-import { Codes } from './Codes';
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from 'typeorm';
 
 @Entity()
 export class Users extends BaseEntity {
@@ -32,8 +31,4 @@ export class Users extends BaseEntity {
 
     @Column({ type: `timestamp`, nullable: false })
     created_at: string;
-
-    @OneToOne(() => Codes, (Code) => Code.code_id, { cascade: true })
-    @JoinTable()
-    statusCode?: Codes;
 }
