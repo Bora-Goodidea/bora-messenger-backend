@@ -2,7 +2,7 @@ import express, { Application } from 'express';
 import path from 'path';
 import _ from 'lodash';
 import fs from 'fs';
-import { TestsRouter, SystemRouter } from '@Routes/Api';
+import { TestsRouter, SystemRouter, AuthRouter } from '@Routes/Api';
 import { RestDefaultMiddleware } from '@Middlewares/RestDefaultMiddleware';
 import { DefaultRouter as DefaultWebRouter, AuthRouter as AuthWebRouter } from '@Routes/Web';
 import { Logger, AccessLogStream, LogDateTime } from '@Logger';
@@ -13,9 +13,9 @@ import fileupload from 'express-fileupload';
 import morgan from 'morgan';
 
 export const checkEnvironment = (): { state: boolean; message: string } => {
-    const envFileExits = fs.existsSync('.env');
+    const envFileExist = fs.existsSync('.env');
 
-    if (!envFileExits) {
+    if (!envFileExist) {
         return {
             state: false,
             message: `Environment File not found...`,
@@ -50,6 +50,7 @@ const addRouters = (app: Application): void => {
     /* apiRoute */
     app.use(`${baseApiRoute}/tests`, TestsRouter);
     app.use(`${baseApiRoute}/system`, RestDefaultMiddleware, SystemRouter);
+    app.use(`${baseApiRoute}/auth`, RestDefaultMiddleware, AuthRouter);
     /* webRoute */
     app.use(`${baseWebRoute}/auth`, AuthWebRouter);
     app.use(`/`, DefaultWebRouter);

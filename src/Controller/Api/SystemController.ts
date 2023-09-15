@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
-import { NoCotentResponse, SuccessResponse, ClientErrorResponse } from '@Commons/ResponseProvider';
+import { NoContentResponse, SuccessResponse, ClientErrorResponse } from '@Commons/ResponseProvider';
 import { findAll } from '@Service/CodeService';
 
 // 서버 체크
 export const CheckStatus = async (req: Request, res: Response): Promise<Response> => {
-    return NoCotentResponse(res);
+    return NoContentResponse(res);
 };
 
 // 에러
