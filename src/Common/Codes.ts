@@ -18,4 +18,13 @@ export default [
             { id: `030`, name: `block 상태` },
         ],
     },
+    {
+        id: `030`,
+        name: `회원 레벨`,
+        list: [
+            { id: `010`, name: `일반 사용자` },
+            { id: `020`, name: `관리자` },
+            { id: `999`, name: `최고 관리자` },
+        ],
+    },
 ];
