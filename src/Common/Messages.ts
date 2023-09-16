@@ -15,8 +15,8 @@ export default {
             passwordEmpty: `비밀번호 정보가 존재 하지 않습니다.`,
             nicknameEmpty: '닉네임 정보가 존재 하지 않습니다.',
             emailValidate: `정확한 이메일 주소를 입력해 주세요.`,
-            emailExist: `이미 사용중인 이메일 주소 입니다.`,
-            nicknameExist: `이미 사용중인 닉네임 입니다.`,
+            emailExits: `이미 사용중인 이메일 주소 입니다.`,
+            nicknameExists: `이미 사용중인 닉네임 입니다.`,
         },
     },
 };

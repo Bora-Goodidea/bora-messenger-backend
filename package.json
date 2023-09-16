@@ -24,6 +24,7 @@
         "npm": "please-use-yarn"
     },
     "scripts": {
+        "start:local": "cp .config/local.environment.env .env && nodemon --exec ts-node -r tsconfig-paths/register --files src/App.ts -e ts",
         "start:dev": "cp .config/develop.environment.env .env && nodemon --exec ts-node -r tsconfig-paths/register --files src/App.ts -e ts",
         "start:prod": "cp .config/production.environment.env .env && nodemon --exec ts-node -r tsconfig-paths/register --files build/App.ts -e ts",
         "start:server": "node build/App.js",
