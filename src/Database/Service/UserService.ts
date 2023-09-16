@@ -1,5 +1,10 @@
+import { UpdateResult } from 'typeorm';
 import { Users } from '@Entity/Users';
 import AppDataSource from '@Database/AppDataSource';
+import { toMySqlDatetime } from '@Helper';
+
+import {} from 'typeorm';
+
 const userRepository = AppDataSource.getRepository(Users);
 /**
  * 이메일 중복 체크
@@ -56,4 +61,24 @@ export const userCreate = async ({
         },
         { transaction: false, data: false },
     );
+};
+
+/**
+ * 로그인용 회원 정보 조회
+ * @param email
+ */
+export const getUserForLogin = async ({ email }: { email: string }): Promise<Users | null> => {
+    return await userRepository.findOne({
+        select: [`id`, `email`, 'password', `status`, 'nickname'],
+        where: { email: email },
+        relations: ['emailauth'],
+    });
+};
+
+/**
+ * 이메인 인증 처리.
+ * @param id
+ */
+export const emailVerified = async ({ id }: { id: number }): Promise<UpdateResult> => {
+    return userRepository.update({ id: id }, { status: '020020', email_verified_at: toMySqlDatetime(new Date()) });
 };
