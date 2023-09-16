@@ -161,9 +161,9 @@ export const EmailAuth = async (req: Request, res: Response): Promise<Response> 
         const { id, user_id, status, user } = selectData;
 
         if (status === 'Y') {
-            res.render('emailAuth', { message: Messages.auth.emailAuth.alreadyCode });
+            return ClientErrorResponse(res, Messages.auth.emailAuth.alreadyCode);
         } else if (!user) {
-            res.render('emailAuth', { message: Messages.auth.emailAuth.emptyUser });
+            return ClientErrorResponse(res, Messages.auth.emailAuth.emptyUser);
         } else {
             const step1 = await authentication({ id: id });
             const step2 = await emailVerified({ id: user_id });
