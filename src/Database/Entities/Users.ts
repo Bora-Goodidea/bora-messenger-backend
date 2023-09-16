@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, OneToOne, JoinColumn } from 'typeorm';
+import { EmailAuth } from './EmailAuth';
 
 @Entity()
 export class Users extends BaseEntity {
@@ -31,4 +32,8 @@ export class Users extends BaseEntity {
 
     @Column({ type: `timestamp`, nullable: false })
     created_at: string;
+
+    @OneToOne(() => EmailAuth, (EA) => EA.user_id, { cascade: true })
+    @JoinColumn({ name: `id` })
+    emailauth?: EmailAuth;
 }
