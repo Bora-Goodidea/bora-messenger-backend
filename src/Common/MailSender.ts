@@ -17,9 +17,9 @@ const MailSender = {
             },
         });
 
-        const serviceLink = Config.PORT
-            ? `${Config.HOSTNAME}:${Config.PORT}/web/auth/emailauth/${EmailAuthCode}`
-            : `${Config.HOSTNAME}/web/auth/emailauth/${EmailAuthCode}`;
+        const serviceLink = Config.FRONT_PORT
+            ? `${Config.FRONT_HOST}:${Config.FRONT_PORT}/auth/${EmailAuthCode}/email-auth`
+            : `${Config.FRONT_HOST}/auth/${EmailAuthCode}/email-auth`;
 
         // 메일 옵션
         const mailOptions = {
@@ -31,6 +31,7 @@ const MailSender = {
             <a href="${serviceLink}">클릭.</a>
             `,
         };
+
         // 메일 발송
         transporter.sendMail(mailOptions, function (error, info) {
             if (error) {

@@ -78,13 +78,18 @@ export const Register = async (req: Request, res: Response): Promise<Response> =
         return ClientErrorResponse(res, Messages.auth.register.emailExits);
     }
 
+    const nicknameCheck = await nickNameExists({ nickname: nickname });
+    if (nicknameCheck > 0) {
+        return ClientErrorResponse(res, Messages.auth.register.nicknameExists);
+    }
+
     const task = await userCreate({
         type: `${req.headers['client-type']}`,
         level: `030010`,
         status: `020010`,
         email: email,
         password: `${bcrypt.hashSync(password, Number(Config.BCRYPT_SALT))}`,
-        nickname: `${email.split('@')[0].toLowerCase().replace(' ', _)}_${Math.floor(Date.now() / 1000)}`,
+        nickname: `${nickname}`,
     });
 
     await emailAuthSave({
@@ -92,7 +97,7 @@ export const Register = async (req: Request, res: Response): Promise<Response> =
         authCode: authCode,
     });
 
-    if (Config.APP_ENV === 'production') {
+    if (Config.APP_ENV === 'production' || Config.APP_ENV === 'development') {
         MailSender.SendEmailAuth({
             ToEmail: email,
             EmailAuthCode: authCode,
@@ -103,9 +108,9 @@ export const Register = async (req: Request, res: Response): Promise<Response> =
         email: task.email,
         nickname: task.nickname,
         authcode: authCode,
-        authlink: Config.PORT
-            ? `${Config.HOSTNAME}:${Config.PORT}/web/auth/emailauth/${authCode}`
-            : `${Config.HOSTNAME}/web/auth/emailauth/${authCode}`,
+        authlink: Config.FRONT_PORT
+            ? `${Config.FRONT_HOST}:${Config.FRONT_PORT}/auth/${authCode}/email-auth`
+            : `${Config.FRONT_HOST}/auth/${authCode}/email-auth`,
     };
 
     if (Config.APP_ENV === 'development') {

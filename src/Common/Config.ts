@@ -9,6 +9,8 @@ export default {
     APP_ENV: process.env.APP_ENV,
     PORT: process.env.PORT,
     HOSTNAME: process.env.HOSTNAME,
+    FRONT_HOST: process.env.FRONT_HOST,
+    FRONT_PORT: process.env.FRONT_PORT,
     MYSQL_HOST: process.env.MYSQL_HOST,
     MYSQL_PORT: process.env.MYSQL_PORT,
     MYSQL_DATABASE: process.env.MYSQL_DATABASE,
