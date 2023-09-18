@@ -5,6 +5,7 @@ export default {
         serverError: `처리중 문제가 발생 했습니다.`,
         authenticateError: `로그인이 필요한 서비스 입니다.`,
         emptyImageFile: `이미지 파일을 등록해 주세요.`,
+        emptyNoticeFile: '서버 공지사항 내용이 없습니다.',
     },
     success: {
         default: `정상 처리 하였습니다.`,

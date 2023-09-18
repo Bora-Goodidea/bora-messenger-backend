@@ -63,3 +63,10 @@ export const AuthenticateErrorResponse = (response: Response): Response => {
         message: Messages.error.authenticateError,
     });
 };
+
+// 서버 공지사항 - 데이터 없을 때
+export const BaseNoticeResponse = (response: Response): Response => {
+    return response.status(httpStatus.created).json({
+        message: Messages.error.emptyNoticeFile,
+    });
+};

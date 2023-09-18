@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { Default } from '@Controllers/Api/TestController';
-import { CheckStatus, BaseData, ErrorTest } from '@Controllers/Api/SystemController';
+import { CheckStatus, BaseData, ErrorTest, SystemNotice } from '@Controllers/Api/SystemController';
 import { EmailExists, NickNameExists, Register, Login, EmailAuth } from '@Controllers/Api/AuthController';
 
 export const TestsRouter = Router();
@@ -14,6 +14,7 @@ TestsRouter.get('/default', Default);
 SystemRouter.get('/check-status', CheckStatus);
 SystemRouter.get('/base-data', BaseData);
 SystemRouter.get('/error-test', ErrorTest);
+SystemRouter.get('/notice', SystemNotice);
 
 /* Auth Router */
 AuthRouter.get('/:email/email-exists', EmailExists);

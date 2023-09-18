@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
-import { NoContentResponse, SuccessResponse, ClientErrorResponse } from '@Commons/ResponseProvider';
+import { NoContentResponse, SuccessResponse, ClientErrorResponse, BaseNoticeResponse } from '@Commons/ResponseProvider';
 import { findAll } from '@Service/CodeService';
+import fs from 'fs';
 
 // 서버 체크
 export const CheckStatus = async (req: Request, res: Response): Promise<Response> => {
@@ -48,4 +49,17 @@ export const BaseData = async (req: Request, res: Response): Promise<Response> =
     });
 
     return SuccessResponse(res, { code: { step1: resultCodeStep1, step2: resultCodeStep2 } });
+};
+
+// 서버 공지사항
+export const SystemNotice = async (req: Request, res: Response): Promise<void> => {
+    if (req) {
+        fs.readFile('storage/notice.txt', 'utf-8', (err, data) => {
+            if (data === '' || err) {
+                return BaseNoticeResponse(res);
+            } else {
+                return SuccessResponse(res, { notice: data.trim() });
+            }
+        });
+    }
 };
