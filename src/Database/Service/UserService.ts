@@ -3,8 +3,6 @@ import { Users } from '@Entity/Users';
 import AppDataSource from '@Database/AppDataSource';
 import { toMySqlDatetime } from '@Helper';
 
-import {} from 'typeorm';
-
 const userRepository = AppDataSource.getRepository(Users);
 /**
  * 이메일 중복 체크

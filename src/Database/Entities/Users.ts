@@ -34,6 +34,6 @@ export class Users extends BaseEntity {
     created_at: string;
 
     @OneToOne(() => EmailAuth, (EA) => EA.user_id, { cascade: true })
-    @JoinColumn({ name: `id` })
+    @JoinColumn({ name: `id`, referencedColumnName: `user_id` })
     emailauth?: EmailAuth;
 }
