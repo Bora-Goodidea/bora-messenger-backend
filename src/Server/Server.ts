@@ -11,6 +11,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import fileupload from 'express-fileupload';
 import morgan from 'morgan';
+import AppDataSource from '@Database/AppDataSource';
 
 export const checkEnvironment = (): { state: boolean; message: string } => {
     const envFileExist = fs.existsSync('.env');
@@ -101,12 +102,28 @@ export const initServer = (app: Application, Path: string): void => {
 };
 
 // 서버 시작.
-export const startServer = (app: Application): void => {
+export const startServer = async (app: Application) => {
+    Logger.console(``);
     const port = Number(Config.PORT);
     const appName = Config.APP_NAME;
     const appEnv = Config.APP_ENV;
 
+    const AppDatainit = await AppDataSource.initialize();
+
+    if (!AppDatainit.isInitialized) {
+        Logger.error(`Database Init Error`);
+        return;
+    } else {
+        Logger.warn(`:: Database Init Success ::`);
+    }
+
     app.listen(port, () => {
-        Logger.console(`\n\nRunning Name  - ${appName}\nRunning Environment - ${appEnv}\nRunning on port - ${port}\n:: Server Start Success ::`);
+        Logger.console(``);
+        Logger.console(`Running Name  - ${appName}`);
+        Logger.console(`Running Environment - ${appEnv}`);
+        Logger.console(`Running on port - ${port}`);
+        Logger.console(``);
+        Logger.warn(`:: Server Start Success ::`);
+        Logger.console(``);
     });
 };

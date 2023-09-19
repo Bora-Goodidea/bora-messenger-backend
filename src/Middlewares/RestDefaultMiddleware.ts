@@ -41,6 +41,6 @@ export const RestDefaultMiddleware = async (req: Request, res: Response, next: N
         req.headers,
     )}}\nBody: ${JSON.stringify(req.body)}`;
 
-    Logger.info(`${logMessage}`, null, true);
+    Logger.info(`${logMessage}`, null);
     next();
 };

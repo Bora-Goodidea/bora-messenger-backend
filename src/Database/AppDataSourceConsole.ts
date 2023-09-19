@@ -1,10 +1,11 @@
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import dotenv from 'dotenv';
+import { Logger } from '@Logger';
 
 dotenv.config();
 
-const AppDataSource = new DataSource({
+const AppDataSourceConsole = new DataSource({
     type: 'mysql',
     host: process.env.MYSQL_HOST,
     port: Number(process.env.MYSQL_PORT),
@@ -18,4 +19,12 @@ const AppDataSource = new DataSource({
     subscribers: [],
 });
 
-export default AppDataSource;
+AppDataSourceConsole.initialize()
+    .then(() => {
+        Logger.console('Data Source has been initialized!');
+    })
+    .catch((err) => {
+        Logger.error('Error during Data Source initialization', err);
+    });
+
+export default AppDataSourceConsole;

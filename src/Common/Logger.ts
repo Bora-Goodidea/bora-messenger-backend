@@ -101,6 +101,10 @@ export class Logger {
     public static error(message: string, error?: Error): void {
         const meta = { stack: error ? error.stack : '' };
         logger.error(message, error ? meta : null);
+
+        if (Config.APP_ENV !== 'production') {
+            consoleLogger.info(message, meta);
+        }
     }
 
     /**
@@ -116,14 +120,13 @@ export class Logger {
      * Logs a info message to the logs `logs/logs.log` file.
      * @param message The info message to be logged.
      * @param meta An optional additional info data.
-     * @param logToConsole Makes sure if it safe to log this info to the console.
      * Could be used to keep sensitive data safe from being logged to the console.
      */
-    public static info(message: string, meta?: unknown, logToConsole?: boolean): void {
+    public static info(message: string, meta?: unknown): void {
         logger.info(message, meta);
 
         /* Make sure if it safe to log this info to the console. */
-        if (logToConsole && Config.APP_ENV !== 'production') {
+        if (Config.APP_ENV !== 'production') {
             consoleLogger.info(message, meta);
         }
     }
