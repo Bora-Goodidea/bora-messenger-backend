@@ -4,8 +4,17 @@ import _ from 'lodash';
 import bcrypt from 'bcrypt';
 import Messages from '@Messages';
 import { emailValidator } from '@Helper';
-import { emailExists, nickNameExists, userCreate, getUserForLogin, emailVerified } from '@Database/Service/UserService';
+import {
+    emailExists,
+    nickNameExists,
+    userCreate,
+    getUserForLogin,
+    emailVerified,
+    getUserByEmail,
+    changePassword,
+} from '@Database/Service/UserService';
 import { emailAuthSave, getData, authentication } from '@Service/EmailAuthService';
+import { createPasswordReset, getPasswordResetInfo, passwordResetCompleted } from '@Service/AuthService';
 import { v4 as uuidv4 } from 'uuid';
 import Config from '@Config';
 import MailSender from '@Commons/MailSender';
@@ -181,4 +190,117 @@ export const EmailAuth = async (req: Request, res: Response): Promise<Response> 
         }
     }
     return ClientErrorResponse(res, Messages.auth.emailAuth.authCodeExits);
+};
+
+// 패스워드 리셋
+export const PasswordReset = async (req: Request, res: Response): Promise<Response> => {
+    const { resetEmail } = req.params;
+    const resetCode = uuidv4();
+
+    if (!emailValidator(resetEmail)) {
+        return ClientErrorResponse(res, Messages.common.emailValidate);
+    }
+
+    const findUser = await getUserByEmail({ email: resetEmail });
+    if (!findUser) {
+        return ClientErrorResponse(res, Messages.common.notFoundEmail);
+    }
+
+    await createPasswordReset({
+        user_id: findUser.id,
+        resetCode: resetCode,
+    });
+
+    if (Config.APP_ENV === 'production' || Config.APP_ENV === 'development') {
+        MailSender.SendPasswordReset({
+            ToEmail: resetEmail,
+            ResetCode: resetCode,
+        });
+    }
+
+    const payload: { email: string; resetcode?: string; resetlink?: string } = {
+        email: resetEmail,
+        resetcode: resetCode,
+        resetlink: Config.FRONT_PORT
+            ? `${Config.FRONT_HOST}:${Config.FRONT_PORT}/auth/${resetCode}/password-change`
+            : `${Config.FRONT_HOST}/auth/${resetCode}/password-change`,
+    };
+
+    if (Config.APP_ENV === 'development') {
+        delete payload.resetcode;
+        delete payload.resetlink;
+    }
+
+    return SuccessResponse(res, payload);
+};
+
+// 인증 코드 확인.
+export const PasswordResetCodeCheck = async (req: Request, res: Response): Promise<Response> => {
+    const { resetCode } = req.params;
+
+    const passwordResetInfo = await getPasswordResetInfo({ resetCode: resetCode });
+
+    if (_.isNull(passwordResetInfo)) {
+        return ClientErrorResponse(res, Messages.auth.changePassword.resetCodeExits);
+    }
+
+    const { status, user } = passwordResetInfo;
+
+    if (status === 'Y') {
+        return ClientErrorResponse(res, Messages.auth.changePassword.alreadyCode);
+    }
+
+    if (_.isNull(user)) {
+        return ClientErrorResponse(res, Messages.auth.changePassword.emptyUser);
+    }
+
+    if (user && user.status !== '020020') {
+        return ClientErrorResponse(res, Messages.auth.changePassword.notNormalUser);
+    }
+
+    return SuccessDefault(res);
+};
+
+// 비밀번호 변경
+export const PasswordChange = async (req: Request, res: Response): Promise<Response> => {
+    const { resetCode } = req.params;
+    const { password } = req.body;
+
+    const passwordResetInfo = await getPasswordResetInfo({ resetCode: resetCode });
+
+    if (_.isNull(passwordResetInfo)) {
+        return ClientErrorResponse(res, Messages.auth.changePassword.resetCodeExits);
+    }
+
+    const { id, user_id, status, user } = passwordResetInfo;
+
+    if (status === 'Y') {
+        return ClientErrorResponse(res, Messages.auth.changePassword.alreadyCode);
+    }
+
+    if (_.isNull(user)) {
+        return ClientErrorResponse(res, Messages.auth.changePassword.emptyUser);
+    }
+
+    if (user && user.status !== '020020') {
+        return ClientErrorResponse(res, Messages.auth.changePassword.notNormalUser);
+    }
+
+    if (_.isEmpty(password)) {
+        return ClientErrorResponse(res, Messages.common.emptyPassword);
+    }
+
+    if (password.length < 4 || password.length > 15) {
+        return ClientErrorResponse(res, Messages.common.checkPassword);
+    }
+
+    if (!(await changePassword({ id: user_id, password: `${bcrypt.hashSync(password, Number(Config.BCRYPT_SALT))}` }))) {
+        return ClientErrorResponse(res, Messages.error.serverError);
+    }
+
+    if (!(await passwordResetCompleted({ id: id }))) {
+        return ClientErrorResponse(res, Messages.error.serverError);
+    }
+
+    return SuccessDefault(res);
 };

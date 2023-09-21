@@ -10,6 +10,12 @@ export default {
     success: {
         default: `정상 처리 하였습니다.`,
     },
+    common: {
+        emailValidate: `정확한 이메일 주소를 입력해 주세요.`,
+        notFoundEmail: `존재 하지 않은 이메일 주소 입니다.`,
+        emptyPassword: `패스워드를 입력해 주세요.`,
+        checkPassword: `비밀번호는 4~15자 이내여야 합니다.`,
+    },
     auth: {
         register: {
             emailEmpty: `이메일 정보가 존재 하지 않습니다.`,
@@ -30,6 +36,12 @@ export default {
             emptyUser: `사용자 정보가 존재 하지 않습니다.`,
             successSubApp: `앱으로 로그인 해주세요.`,
             successSubWeb: `웹으로 로그인 해주세요.`,
+        },
+        changePassword: {
+            resetCodeExits: `존재 하지 않은 변경 코드 입니다.`,
+            alreadyCode: `이미 변경을 완료했습니다.`,
+            emptyUser: `사용자 정보가 존재 하지 않습니다.`,
+            notNormalUser: `변경 불가능한 유저 입니다.`,
         },
     },
 };
