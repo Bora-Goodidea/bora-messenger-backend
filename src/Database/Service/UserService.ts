@@ -4,6 +4,7 @@ import AppDataSource from '@Database/AppDataSource';
 import { toMySqlDatetime } from '@Helper';
 
 const userRepository = AppDataSource.getRepository(Users);
+
 /**
  * 이메일 중복 체크
  * @param email
@@ -79,4 +80,21 @@ export const getUserForLogin = async ({ email }: { email: string }): Promise<Use
  */
 export const emailVerified = async ({ id }: { id: number }): Promise<UpdateResult> => {
     return userRepository.update({ id: id }, { status: '020020', email_verified_at: toMySqlDatetime(new Date()) });
+};
+
+/**
+ * 이메일 사용자 정보
+ * @param email
+ */
+export const getUserByEmail = async ({ email }: { email: string }): Promise<Users | null> => {
+    return await userRepository.findOne({ where: { email: email } });
+};
+
+/**
+ * 비밀 번호 변경
+ * @param id
+ * @param password
+ */
+export const changePassword = async ({ id, password }: { id: number; password: string }): Promise<UpdateResult> => {
+    return await userRepository.update({ id: id }, { password: password, updated_at: toMySqlDatetime(new Date()) });
 };
