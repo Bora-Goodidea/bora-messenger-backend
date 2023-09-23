@@ -12,6 +12,7 @@ import {
     emailVerified,
     getUserByEmail,
     changePassword,
+    createDefaultProfile,
 } from '@Database/Service/UserService';
 import { emailAuthSave, getData, authentication } from '@Service/EmailAuthService';
 import { createPasswordReset, getPasswordResetInfo, passwordResetCompleted } from '@Service/AuthService';
@@ -99,6 +100,10 @@ export const Register = async (req: Request, res: Response): Promise<Response> =
         email: email,
         password: `${bcrypt.hashSync(password, Number(Config.BCRYPT_SALT))}`,
         nickname: `${nickname}`,
+    });
+
+    await createDefaultProfile({
+        user_id: task.id,
     });
 
     await emailAuthSave({
@@ -303,4 +308,14 @@ export const PasswordChange = async (req: Request, res: Response): Promise<Respo
     }
 
     return SuccessDefault(res);
+};
+
+// 토큰 정보
+export const TokenInfo = async (req: Request, res: Response): Promise<Response> => {
+    const { email, status, level } = req.app.locals.user;
+    return SuccessResponse(res, {
+        email: email,
+        status: status,
+        level: level,
+    });
 };

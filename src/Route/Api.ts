@@ -10,11 +10,15 @@ import {
     PasswordReset,
     PasswordChange,
     PasswordResetCodeCheck,
+    TokenInfo,
 } from '@Controllers/Api/AuthController';
+import { RestAuthenticateMiddleware } from '@Middlewares/RestAuthenticateMiddleware';
+import { MyProfile } from '@Controllers/Api/MemberController';
 
 export const TestsRouter = Router();
 export const SystemRouter = Router();
 export const AuthRouter = Router();
+export const MemberRouter = Router();
 
 /* 테스트 Router */
 TestsRouter.get('/default', Default);
@@ -34,3 +38,7 @@ AuthRouter.get('/:authCode/email-auth', EmailAuth);
 AuthRouter.get('/:resetEmail/password-reset', PasswordReset);
 AuthRouter.get('/:resetCode/password-reset-code-check', PasswordResetCodeCheck);
 AuthRouter.post('/:resetCode/password-change', PasswordChange);
+AuthRouter.get('/token-info', RestAuthenticateMiddleware, TokenInfo);
+
+/* Member Router */
+MemberRouter.get('/my-profile', RestAuthenticateMiddleware, MyProfile);
