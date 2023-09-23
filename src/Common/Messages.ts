@@ -44,4 +44,12 @@ export default {
             notNormalUser: `변경 불가능한 유저 입니다.`,
         },
     },
+    member: {
+        profile: {
+            emptyProfileImage: `프로필 이미지를 등록해 주세요.`,
+            imageCheckError: `이미지 정보가 잘못 되었습니다`,
+            emptyNickName: `닉네임을 등록해 주세요`,
+            exitsNickName: `이미 사용중인 닉네임 입니다.`,
+        },
+    },
 };

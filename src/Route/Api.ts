@@ -13,7 +13,7 @@ import {
     TokenInfo,
 } from '@Controllers/Api/AuthController';
 import { RestAuthenticateMiddleware } from '@Middlewares/RestAuthenticateMiddleware';
-import { MyProfile } from '@Controllers/Api/MemberController';
+import { MyProfile, ProfileEdit } from '@Controllers/Api/MemberController';
 import { ImageCreate } from '@Controllers/Api/MediaController';
 
 export const TestsRouter = Router();
@@ -44,6 +44,7 @@ AuthRouter.get('/token-info', RestAuthenticateMiddleware, TokenInfo);
 
 /* Member Router */
 MemberRouter.get('/my-profile', RestAuthenticateMiddleware, MyProfile);
+MemberRouter.post('/profile-update', RestAuthenticateMiddleware, ProfileEdit);
 
 /* Media Router */
 MediaRouter.post('/image-create', RestAuthenticateMiddleware, ImageCreate);
