@@ -1,4 +1,4 @@
-import { UpdateResult } from 'typeorm';
+import { Not, UpdateResult } from 'typeorm';
 import { Users } from '@Entity/Users';
 import { Profile } from '@Entity/Profile';
 import AppDataSource from '@Database/AppDataSource';
@@ -23,6 +23,17 @@ export const emailExists = async ({ email }: { email: string }): Promise<number>
  */
 export const nickNameExists = async ({ nickname }: { nickname: string }): Promise<number> => {
     const task = await userRepository.find({ select: ['id'], where: { nickname: nickname } });
+
+    return task.length;
+};
+
+/**
+ * 닉네임 중복 체크 - 프로필
+ * @param nickname
+ * @param user_id
+ */
+export const profileNickNameExits = async ({ user_id, nickname }: { user_id: number; nickname: string }): Promise<number> => {
+    const task = await userRepository.find({ select: ['id'], where: { id: Not(user_id), nickname: nickname } });
 
     return task.length;
 };
@@ -125,4 +136,34 @@ export const getUserProfile = async ({ user_id }: { user_id: number }): Promise<
         where: { id: user_id },
         relations: ['profile', 'profile.media'],
     });
+};
+
+/**
+ * 프로필 이미지 변경
+ * @param user_id
+ * @param media
+ */
+export const updateProfileImage = async ({ user_id, media }: { user_id: number; media: number }): Promise<UpdateResult> => {
+    return profileRepository.update(
+        { user_id: user_id },
+        {
+            profile_image_id: media,
+            updated_at: toMySqlDatetime(new Date()),
+        },
+    );
+};
+
+/**
+ * 프로필 변경
+ * @param user_id
+ * @param nickname
+ */
+export const updateProfile = async ({ user_id, nickname }: { user_id: number; nickname: string }): Promise<UpdateResult> => {
+    return userRepository.update(
+        { id: user_id },
+        {
+            nickname: nickname,
+            updated_at: toMySqlDatetime(new Date()),
+        },
+    );
 };
