@@ -1,9 +1,11 @@
 import { UpdateResult } from 'typeorm';
 import { Users } from '@Entity/Users';
+import { Profile } from '@Entity/Profile';
 import AppDataSource from '@Database/AppDataSource';
 import { toMySqlDatetime } from '@Helper';
 
 const userRepository = AppDataSource.getRepository(Users);
+const profileRepository = AppDataSource.getRepository(Profile);
 
 /**
  * 이메일 중복 체크
@@ -97,4 +99,30 @@ export const getUserByEmail = async ({ email }: { email: string }): Promise<User
  */
 export const changePassword = async ({ id, password }: { id: number; password: string }): Promise<UpdateResult> => {
     return await userRepository.update({ id: id }, { password: password, updated_at: toMySqlDatetime(new Date()) });
+};
+
+/**
+ * 기본 프로필 등록
+ * @param user_id
+ */
+export const createDefaultProfile = async ({ user_id }: { user_id: number }): Promise<Profile> => {
+    return profileRepository.save(
+        {
+            user_id: user_id,
+            profile_image_id: 1,
+        },
+        { transaction: false, data: false },
+    );
+};
+
+/**
+ * 사용자 프로필 정보
+ * @param user_id
+ */
+export const getUserProfile = async ({ user_id }: { user_id: number }): Promise<Users | null> => {
+    return await userRepository.findOne({
+        select: [`id`, `email`, 'nickname'],
+        where: { id: user_id },
+        relations: ['profile', 'profile.media'],
+    });
 };
