@@ -26,7 +26,7 @@ export class Profile1686381353733 implements MigrationInterface {
                     {
                         name: 'updated_at',
                         type: 'timestamp',
-                        default: 'now()',
+                        isNullable: true,
                     },
                     {
                         name: 'created_at',

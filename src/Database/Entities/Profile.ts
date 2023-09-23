@@ -13,7 +13,7 @@ export class Profile extends BaseEntity {
     @Column({ type: 'int', nullable: false })
     profile_image_id: number;
 
-    @Column({ type: `timestamp`, nullable: false })
+    @Column({ type: `timestamp`, nullable: true })
     updated_at: string;
 
     @Column({ type: `timestamp`, nullable: false })
