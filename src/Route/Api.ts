@@ -14,11 +14,13 @@ import {
 } from '@Controllers/Api/AuthController';
 import { RestAuthenticateMiddleware } from '@Middlewares/RestAuthenticateMiddleware';
 import { MyProfile } from '@Controllers/Api/MemberController';
+import { ImageCreate } from '@Controllers/Api/MediaController';
 
 export const TestsRouter = Router();
 export const SystemRouter = Router();
 export const AuthRouter = Router();
 export const MemberRouter = Router();
+export const MediaRouter = Router();
 
 /* 테스트 Router */
 TestsRouter.get('/default', Default);
@@ -42,3 +44,6 @@ AuthRouter.get('/token-info', RestAuthenticateMiddleware, TokenInfo);
 
 /* Member Router */
 MemberRouter.get('/my-profile', RestAuthenticateMiddleware, MyProfile);
+
+/* Media Router */
+MediaRouter.post('/image-create', RestAuthenticateMiddleware, ImageCreate);
