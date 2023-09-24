@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { ClientErrorResponse, SuccessDefault, SuccessResponse } from '@Commons/ResponseProvider';
+import { ClientErrorResponse, SuccessDefault, SuccessResponse, ServerErrorResponse } from '@Commons/ResponseProvider';
 import _ from 'lodash';
 import bcrypt from 'bcrypt';
 import Messages from '@Messages';
@@ -19,7 +19,7 @@ import { createPasswordReset, getPasswordResetInfo, passwordResetCompleted } fro
 import { v4 as uuidv4 } from 'uuid';
 import Config from '@Config';
 import MailSender from '@Commons/MailSender';
-import { generateLoginToken } from '@TokenManager';
+import { generateLoginToken, tokenRefresh } from '@TokenManager';
 
 // 이메일 중복 체크
 export const EmailExists = async (req: Request, res: Response): Promise<Response> => {
@@ -318,4 +318,15 @@ export const TokenInfo = async (req: Request, res: Response): Promise<Response> 
         status: status,
         level: level,
     });
+};
+
+// 로큰 refresh
+export const TokenRefresh = async (req: Request, res: Response): Promise<Response> => {
+    const { refresh_token } = req.body;
+    const refreshTask = await tokenRefresh({ refreshToken: refresh_token });
+    if (refreshTask.status) {
+        return SuccessResponse(res, { access_token: refreshTask.accessToken, refresh_token: refreshTask.refreshToken });
+    } else {
+        return ServerErrorResponse(res);
+    }
 };

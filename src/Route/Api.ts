@@ -11,6 +11,7 @@ import {
     PasswordChange,
     PasswordResetCodeCheck,
     TokenInfo,
+    TokenRefresh,
 } from '@Controllers/Api/AuthController';
 import { RestAuthenticateMiddleware } from '@Middlewares/RestAuthenticateMiddleware';
 import { MyProfile, ProfileEdit } from '@Controllers/Api/MemberController';
@@ -41,6 +42,7 @@ AuthRouter.get('/:resetEmail/password-reset', PasswordReset);
 AuthRouter.get('/:resetCode/password-reset-code-check', PasswordResetCodeCheck);
 AuthRouter.post('/:resetCode/password-change', PasswordChange);
 AuthRouter.get('/token-info', RestAuthenticateMiddleware, TokenInfo);
+AuthRouter.post('/token-refresh', RestAuthenticateMiddleware, TokenRefresh);
 
 /* Member Router */
 MemberRouter.get('/my-profile', RestAuthenticateMiddleware, MyProfile);
