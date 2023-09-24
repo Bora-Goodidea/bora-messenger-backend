@@ -42,7 +42,7 @@ AuthRouter.get('/:resetEmail/password-reset', PasswordReset);
 AuthRouter.get('/:resetCode/password-reset-code-check', PasswordResetCodeCheck);
 AuthRouter.post('/:resetCode/password-change', PasswordChange);
 AuthRouter.get('/token-info', RestAuthenticateMiddleware, TokenInfo);
-AuthRouter.post('/token-refresh', RestAuthenticateMiddleware, TokenRefresh);
+AuthRouter.post('/token-refresh', TokenRefresh);
 
 /* Member Router */
 MemberRouter.get('/my-profile', RestAuthenticateMiddleware, MyProfile);
