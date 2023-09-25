@@ -327,6 +327,6 @@ export const TokenRefresh = async (req: Request, res: Response): Promise<Respons
     if (refreshTask.status) {
         return SuccessResponse(res, { access_token: refreshTask.accessToken, refresh_token: refreshTask.refreshToken });
     } else {
-        return ServerErrorResponse(res);
+        return ClientErrorResponse(res);
     }
 };
