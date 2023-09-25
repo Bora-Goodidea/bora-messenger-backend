@@ -56,7 +56,7 @@ export const SystemNotice = async (req: Request, res: Response): Promise<void> =
     if (req) {
         fs.readFile('storage/notice.txt', 'utf-8', (err, data) => {
             if (data === '' || err) {
-                return BaseNoticeResponse(res);
+                return NoContentResponse(res);
             } else {
                 return SuccessResponse(res, { notice: data.trim() });
             }
