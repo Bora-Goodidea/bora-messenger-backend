@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { ClientErrorResponse, SuccessDefault, SuccessResponse, ServerErrorResponse } from '@Commons/ResponseProvider';
+import { ClientErrorResponse, SuccessDefault, SuccessResponse } from '@Commons/ResponseProvider';
 import _ from 'lodash';
 import bcrypt from 'bcrypt';
 import Messages from '@Messages';

@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner, TableForeignKey, TableIndex } from 'typeorm';
+import { MigrationInterface, QueryRunner, TableIndex } from 'typeorm';
 
 export class UserAddUUIDColumn1695697019224 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {

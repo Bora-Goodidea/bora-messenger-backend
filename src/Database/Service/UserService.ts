@@ -40,6 +40,7 @@ export const profileNickNameExits = async ({ user_id, nickname }: { user_id: num
 
 /**
  * 사용자 등록
+ * @param uid
  * @param type
  * @param level
  * @param status
