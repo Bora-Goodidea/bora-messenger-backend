@@ -178,6 +178,6 @@ export const updateProfile = async ({ user_id, nickname }: { user_id: number; ni
 export const userList = async (): Promise<Users[] | null> => {
     return await userRepository.find({
         select: [`id`, `uid`, `type`, `level`, `status`, `email`, `nickname`, `email_verified_at`, `updated_at`, `created_at`],
-        relations: ['typeCode', 'levelCode', 'statusCode', 'profile', 'profile.media'],
+        relations: ['typeCode', 'levelCode', 'statusCode', 'profile', 'profile.media', 'active'],
     });
 };

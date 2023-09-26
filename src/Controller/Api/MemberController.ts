@@ -117,6 +117,7 @@ export const Members = async (req: Request, res: Response): Promise<Response> =>
                 profile: {
                     image: profileImage,
                 },
+                active: user.active ? user.active.active : 'N',
                 created_at: createdAt,
                 updated_at: updatedAt,
             };
