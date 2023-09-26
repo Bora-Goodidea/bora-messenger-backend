@@ -39,13 +39,15 @@ export const generateRandomLetter = () => {
 
 /**
  * mysql datetime 변환
+ * @param depth
  * @param date
  */
 export const changeMysqlDate = (
+    depth: `simply` | `detail`,
     date: string,
 ): {
     origin: Date;
-    number: {
+    number?: {
         year: number;
         month: number;
         date: number;
@@ -54,7 +56,7 @@ export const changeMysqlDate = (
         minutes: number;
         seconds: number;
     };
-    string: {
+    string?: {
         year: string;
         month: string;
         date: string;
@@ -66,9 +68,9 @@ export const changeMysqlDate = (
     format: {
         step1: string;
         step2: string;
-        step3: string;
-        step4: string;
-        sinceString: string;
+        step3?: string;
+        step4?: string;
+        sinceString?: string;
     };
 } => {
     const days = ['일', '월', '화', '수', '목', '금', '토'];
@@ -83,44 +85,58 @@ export const changeMysqlDate = (
     const dateMinutes = convertDate.getMinutes();
     const dateSeconds = convertDate.getSeconds();
 
-    return {
-        origin: convertDate,
-        number: {
-            year: dateYear,
-            month: dateMonth,
-            date: dateDate,
-            day: dateDay,
-            hour: dateHour,
-            minutes: dateMinutes,
-            seconds: dateSeconds,
-        },
-        string: {
-            year: String(dateYear),
-            month: String(dateMonth).padStart(2, '0'),
-            date: String(dateDate).padStart(2, '0'),
-            day: String(dateDay).padStart(2, '0'),
-            hour: String(dateHour).padStart(2, '0'),
-            minutes: String(dateMinutes).padStart(2, '0'),
-            seconds: String(dateSeconds).padStart(2, '0'),
-        },
-        format: {
-            step1: `${dateYear}년 ${dateMonth + 1}월 ${dateDate}일 ${
-                days[convertDate.getDay()]
-            }요일 ${convertDate.getHours()}시 ${convertDate.getMinutes()}분 ${convertDate.getSeconds()}초`,
-            step2: `${dateYear}년 ${dateMonth + 1}월 ${dateDate}일 ${
-                days[convertDate.getDay()]
-            }요일 ${convertDate.getHours()}시 ${convertDate.getMinutes()}분`,
-            step3: `${String(dateYear)}-${String(dateMonth).padStart(2, '0')}-${String(dateDay).padStart(2, '0')} ${String(dateHour).padStart(
-                2,
-                '0',
-            )}:${String(dateMinutes).padStart(2, '0')}:${String(dateSeconds).padStart(2, '0')}`,
-            step4: `${String(dateYear)}-${String(dateMonth).padStart(2, '0')}-${String(dateDay).padStart(2, '0')} ${String(dateHour).padStart(
-                2,
-                '0',
-            )}:${String(dateMinutes).padStart(2, '0')}`,
-            sinceString: timeSince(convertDate),
-        },
-    };
+    if (depth === 'detail') {
+        return {
+            origin: convertDate,
+            number: {
+                year: dateYear,
+                month: dateMonth,
+                date: dateDate,
+                day: dateDay,
+                hour: dateHour,
+                minutes: dateMinutes,
+                seconds: dateSeconds,
+            },
+            string: {
+                year: String(dateYear),
+                month: String(dateMonth).padStart(2, '0'),
+                date: String(dateDate).padStart(2, '0'),
+                day: String(dateDay).padStart(2, '0'),
+                hour: String(dateHour).padStart(2, '0'),
+                minutes: String(dateMinutes).padStart(2, '0'),
+                seconds: String(dateSeconds).padStart(2, '0'),
+            },
+            format: {
+                step1: `${dateYear}년 ${dateMonth + 1}월 ${dateDate}일 ${
+                    days[convertDate.getDay()]
+                }요일 ${convertDate.getHours()}시 ${convertDate.getMinutes()}분 ${convertDate.getSeconds()}초`,
+                step2: `${dateYear}년 ${dateMonth + 1}월 ${dateDate}일 ${
+                    days[convertDate.getDay()]
+                }요일 ${convertDate.getHours()}시 ${convertDate.getMinutes()}분`,
+                step3: `${String(dateYear)}-${String(dateMonth).padStart(2, '0')}-${String(dateDay).padStart(2, '0')} ${String(dateHour).padStart(
+                    2,
+                    '0',
+                )}:${String(dateMinutes).padStart(2, '0')}:${String(dateSeconds).padStart(2, '0')}`,
+                step4: `${String(dateYear)}-${String(dateMonth).padStart(2, '0')}-${String(dateDay).padStart(2, '0')} ${String(dateHour).padStart(
+                    2,
+                    '0',
+                )}:${String(dateMinutes).padStart(2, '0')}`,
+                sinceString: timeSince(convertDate),
+            },
+        };
+    } else {
+        return {
+            origin: convertDate,
+            format: {
+                step1: `${dateYear}년 ${dateMonth + 1}월 ${dateDate}일 ${
+                    days[convertDate.getDay()]
+                }요일 ${convertDate.getHours()}시 ${convertDate.getMinutes()}분 ${convertDate.getSeconds()}초`,
+                step2: `${dateYear}년 ${dateMonth + 1}월 ${dateDate}일 ${
+                    days[convertDate.getDay()]
+                }요일 ${convertDate.getHours()}시 ${convertDate.getMinutes()}분`,
+            },
+        };
+    }
 };
 
 /**

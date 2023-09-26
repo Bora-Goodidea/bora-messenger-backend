@@ -1,4 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, OneToOne, JoinColumn } from 'typeorm';
+import { Codes } from './Codes';
 import { EmailAuth } from './EmailAuth';
 import { Profile } from './Profile';
 
@@ -36,6 +37,18 @@ export class Users extends BaseEntity {
 
     @Column({ type: `timestamp`, nullable: false })
     created_at: string;
+
+    @OneToOne(() => Codes, (Code) => Code.code_id, { cascade: true })
+    @JoinColumn({ name: `type`, referencedColumnName: `code_id` })
+    typeCode?: Codes;
+
+    @OneToOne(() => Codes, (Code) => Code.code_id, { cascade: true })
+    @JoinColumn({ name: `level`, referencedColumnName: `code_id` })
+    levelCode?: Codes;
+
+    @OneToOne(() => Codes, (Code) => Code.code_id, { cascade: true })
+    @JoinColumn({ name: `status`, referencedColumnName: `code_id` })
+    statusCode?: Codes;
 
     @OneToOne(() => EmailAuth, (EA) => EA.user_id, { cascade: true })
     @JoinColumn({ name: `id`, referencedColumnName: `user_id` })

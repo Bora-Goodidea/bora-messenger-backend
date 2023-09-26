@@ -1,11 +1,12 @@
 import { Request, Response } from 'express';
 import { ClientErrorResponse, SuccessDefault, SuccessResponse } from '@Commons/ResponseProvider';
-import { getUserProfile, profileNickNameExits, updateProfile, updateProfileImage } from '@Service/UserService';
+import { getUserProfile, profileNickNameExits, updateProfile, updateProfileImage, userList } from '@Service/UserService';
 import Config from '@Commons/Config';
-import _ from 'lodash';
+import lodash from 'lodash';
 import Messages from '@Commons/Messages';
 import { mediaExits } from '@Database/Service/MediaService';
 import { Logger } from '@Commons/Logger';
+import { changeMysqlDate } from '@Helper';
 
 // 내 프로필
 export const MyProfile = async (req: Request, res: Response): Promise<Response> => {
@@ -31,7 +32,7 @@ export const ProfileEdit = async (req: Request, res: Response): Promise<Response
     const { profileImage, nickname } = req.body;
     const userId = req.app.locals.user.user_id;
 
-    if (_.isEmpty(nickname)) {
+    if (lodash.isEmpty(nickname)) {
         return ClientErrorResponse(res, Messages.member.profile.emptyNickName);
     }
 
@@ -42,7 +43,7 @@ export const ProfileEdit = async (req: Request, res: Response): Promise<Response
     }
 
     // 이미지 업데이트
-    if (_.isNumber(profileImage)) {
+    if (lodash.isNumber(profileImage)) {
         const checkMedia = await mediaExits({ user_id: userId, id: profileImage });
         if (checkMedia === 0) {
             Logger.error(`ProfileEdit: checkMedia error`);
@@ -55,4 +56,70 @@ export const ProfileEdit = async (req: Request, res: Response): Promise<Response
     await updateProfile({ user_id: userId, nickname: nickname });
 
     return SuccessDefault(res);
+};
+
+export const Members = async (req: Request, res: Response): Promise<Response> => {
+    const task = await userList();
+    return SuccessResponse(
+        res,
+        lodash.map(task, (user) => {
+            const typeInfo = user.typeCode
+                ? {
+                      code: user.typeCode ? user.typeCode.code_id : ``,
+                      name: user.typeCode ? user.typeCode.name : ``,
+                  }
+                : {
+                      code: '',
+                      name: '',
+                  };
+
+            const levelInfo = user.levelCode
+                ? {
+                      code: user.levelCode ? user.levelCode.code_id : ``,
+                      name: user.levelCode ? user.levelCode.name : ``,
+                  }
+                : {
+                      code: '',
+                      name: '',
+                  };
+
+            const statusInfo = user.statusCode
+                ? {
+                      code: user.statusCode ? user.statusCode.code_id : ``,
+                      name: user.statusCode ? user.statusCode.name : ``,
+                  }
+                : {
+                      code: '',
+                      name: '',
+                  };
+
+            const profileImage =
+                user.profile && user.profile.media
+                    ? {
+                          id: user.profile ? user.profile.profile_image_id : '',
+                          url: `${Config.MEDIA_HOSTNAME}${user.profile.media.path}/${user.profile.media.filename}`,
+                      }
+                    : {
+                          id: 0,
+                          url: ``,
+                      };
+
+            const createdAt = changeMysqlDate(`simply`, user.created_at);
+            const updatedAt = changeMysqlDate(`simply`, user.updated_at);
+            return {
+                id: user.id,
+                uid: user.uid,
+                type: typeInfo,
+                level: levelInfo,
+                status: statusInfo,
+                email: user.email,
+                nickname: user.nickname,
+                profile: {
+                    image: profileImage,
+                },
+                created_at: createdAt,
+                updated_at: updatedAt,
+            };
+        }),
+    );
 };
