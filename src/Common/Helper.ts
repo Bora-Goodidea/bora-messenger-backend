@@ -1,3 +1,5 @@
+import crypto from 'crypto';
+
 /**
  * 이메일 검사
  * @param email
@@ -145,6 +147,7 @@ export const timeSince = (date: Date): string => {
 
     return `알수 없음`;
 };
+
 /**
  * 콤마 추가
  * @param num
@@ -153,4 +156,18 @@ export const addComma = (num: number): string => {
     if (isNaN(num)) return '';
     const regexp = /\B(?=(\d{3})+(?!\d))/g;
     return num.toString().replace(regexp, ',');
+};
+
+/**
+ * uuid 생성
+ */
+export const generateUUID = (): string => {
+    return crypto.randomUUID();
+};
+
+/**
+ * 랜덤 스트링
+ */
+export const generateHexRandString = (): string => {
+    return crypto.randomBytes(10).toString('hex');
 };

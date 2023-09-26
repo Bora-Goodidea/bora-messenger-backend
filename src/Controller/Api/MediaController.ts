@@ -3,18 +3,17 @@ import { ClientErrorResponse, SuccessResponse, ServerErrorResponse } from '@Comm
 import { Logger } from '@Commons/Logger';
 import _ from 'lodash';
 import Messages from '@Messages';
-import { v4 as uuidv4 } from 'uuid';
 import { UploadedFile } from 'express-fileupload';
 import ssc from 'ssh2-sftp-client';
 import Config from '@Config';
-import { getFileExtension, generateRandomLetter } from '@Helper';
+import { getFileExtension, generateRandomLetter, generateUUID } from '@Helper';
 import { mediaCreate } from '@Service/MediaService';
 
 export const ImageCreate = async (req: Request, res: Response): Promise<Response> => {
     const imageFile = !_.isEmpty(req.files?.image) ? (req.files?.image as UploadedFile) : null;
 
     if (imageFile) {
-        const newImageFilename = uuidv4();
+        const newImageFilename = generateUUID();
         const fileExtension = getFileExtension(imageFile.name);
         const targetFileName = `${newImageFilename}.${fileExtension}`;
         const randomDestPath = generateRandomLetter();

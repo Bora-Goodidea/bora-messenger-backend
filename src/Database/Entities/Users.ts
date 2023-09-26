@@ -7,6 +7,9 @@ export class Users extends BaseEntity {
     @PrimaryGeneratedColumn('increment')
     id: number;
 
+    @Column({ type: `varchar`, nullable: false, length: 40 })
+    uid: string;
+
     @Column({ type: `char`, nullable: false, length: 6 })
     type: string;
 

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { Default } from '@Controllers/Api/TestController';
+import { Default, RandomString } from '@Controllers/Api/TestController';
 import { CheckStatus, BaseData, ErrorTest, SystemNotice } from '@Controllers/Api/SystemController';
 import {
     EmailExists,
@@ -25,6 +25,7 @@ export const MediaRouter = Router();
 
 /* 테스트 Router */
 TestsRouter.get('/default', Default);
+TestsRouter.get('/rand-string', RandomString);
 
 /* System Router */
 SystemRouter.get('/check-status', CheckStatus);

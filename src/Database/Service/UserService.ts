@@ -48,6 +48,7 @@ export const profileNickNameExits = async ({ user_id, nickname }: { user_id: num
  * @param nickname
  */
 export const userCreate = async ({
+    uid,
     type,
     level,
     status,
@@ -55,6 +56,7 @@ export const userCreate = async ({
     password,
     nickname,
 }: {
+    uid: string;
     type: string;
     level: string;
     status: string;
@@ -64,6 +66,7 @@ export const userCreate = async ({
 }): Promise<Users> => {
     return userRepository.save(
         {
+            uid: uid,
             type: type,
             level: level,
             status: status,

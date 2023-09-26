@@ -3,7 +3,7 @@ import { ClientErrorResponse, SuccessDefault, SuccessResponse, ServerErrorRespon
 import _ from 'lodash';
 import bcrypt from 'bcrypt';
 import Messages from '@Messages';
-import { emailValidator } from '@Helper';
+import { emailValidator, generateUUID } from '@Helper';
 import {
     emailExists,
     nickNameExists,
@@ -16,7 +16,6 @@ import {
 } from '@Database/Service/UserService';
 import { emailAuthSave, getData, authentication } from '@Service/EmailAuthService';
 import { createPasswordReset, getPasswordResetInfo, passwordResetCompleted } from '@Service/AuthService';
-import { v4 as uuidv4 } from 'uuid';
 import Config from '@Config';
 import MailSender from '@Commons/MailSender';
 import { generateLoginToken, tokenRefresh } from '@TokenManager';
@@ -63,7 +62,7 @@ export const NickNameExists = async (req: Request, res: Response): Promise<Respo
 
 // 회원가입
 export const Register = async (req: Request, res: Response): Promise<Response> => {
-    const authCode = uuidv4();
+    const authCode = generateUUID();
     const { email, password, nickname } = req.body;
 
     if (_.isEmpty(email)) {
@@ -94,6 +93,7 @@ export const Register = async (req: Request, res: Response): Promise<Response> =
     }
 
     const task = await userCreate({
+        uid: generateUUID(),
         type: `${req.headers['client-type']}`,
         level: `030010`,
         status: `020010`,
@@ -200,7 +200,7 @@ export const EmailAuth = async (req: Request, res: Response): Promise<Response> 
 // 패스워드 리셋
 export const PasswordReset = async (req: Request, res: Response): Promise<Response> => {
     const { resetEmail } = req.params;
-    const resetCode = uuidv4();
+    const resetCode = generateUUID();
 
     if (!emailValidator(resetEmail)) {
         return ClientErrorResponse(res, Messages.common.emailValidate);
