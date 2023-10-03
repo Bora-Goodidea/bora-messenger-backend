@@ -173,11 +173,43 @@ export const updateProfile = async ({ user_id, nickname }: { user_id: number; ni
 };
 
 /**
- * 사용자 전체 리스트
+ * 사용자 전체 리스트 ( 본인 포함 )
  */
-export const userList = async (): Promise<Users[] | null> => {
+export const userAllList = async (): Promise<Users[] | null> => {
     return await userRepository.find({
         select: [`id`, `uid`, `type`, `level`, `status`, `email`, `nickname`, `email_verified_at`, `updated_at`, `created_at`],
         relations: ['typeCode', 'levelCode', 'statusCode', 'profile', 'profile.media', 'active'],
     });
+};
+
+/**
+ * 사용자 전체 리스트 ( 본인제외 )
+ */
+export const userListExceptMe = async ({ user_id }: { user_id: number }): Promise<Users[] | null> => {
+    return await userRepository.find({
+        select: [`id`, `uid`, `type`, `level`, `status`, `email`, `nickname`, `email_verified_at`, `updated_at`, `created_at`],
+        where: { id: Not(user_id) },
+        relations: ['typeCode', 'levelCode', 'statusCode', 'profile', 'profile.media', 'active'],
+    });
+};
+
+/**
+ * uid 로 사용자 정보 조회
+ * @param uid
+ */
+export const getUserInfoByUid = async ({ uid }: { uid: string }): Promise<Users | null> => {
+    return await userRepository.findOne({
+        select: [`id`, `uid`, `type`, `level`, `status`, `email`, `nickname`, `email_verified_at`, `updated_at`, `created_at`],
+        where: { uid: uid },
+    });
+};
+
+/**
+ * 사용자 uid 존재 확인
+ * @param uid
+ */
+export const uidExists = async ({ uid }: { uid: string }): Promise<number> => {
+    const task = await userRepository.find({ select: ['id'], where: { uid: uid } });
+
+    return task.length;
 };

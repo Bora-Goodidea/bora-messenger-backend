@@ -1,4 +1,6 @@
 import crypto from 'crypto';
+import { Users } from '@Entity/Users';
+import Config from '@Config';
 
 /**
  * 이메일 검사
@@ -186,4 +188,87 @@ export const generateUUID = (): string => {
  */
 export const generateHexRandString = (): string => {
     return crypto.randomBytes(10).toString('hex');
+};
+
+/**
+ * 단반향 암호화
+ * @param string
+ */
+export const generateShaHashString = (string: string): string => {
+    return crypto.createHash(`sha512`).update(string).digest(`base64`);
+};
+
+export const generateUserInfo = ({
+    depth,
+    user,
+}: {
+    depth: `simply` | `detail`;
+    user: Users;
+}): {
+    id?: number;
+    uid: string;
+    email?: string;
+    nickname: string;
+    type?: {
+        code: string;
+        name: string;
+    };
+    level?: {
+        code: string;
+        name: string;
+    };
+    status?: {
+        code: string;
+        name: string;
+    };
+    profile: {
+        image: string;
+    };
+} => {
+    if (depth === `detail`) {
+        return {
+            id: user.id,
+            uid: user.uid,
+            email: user.email,
+            nickname: user.nickname,
+            type: user.typeCode
+                ? {
+                      code: user.typeCode ? user.typeCode.code_id : ``,
+                      name: user.typeCode ? user.typeCode.name : ``,
+                  }
+                : {
+                      code: '',
+                      name: '',
+                  },
+            level: user.levelCode
+                ? {
+                      code: user.levelCode ? user.levelCode.code_id : ``,
+                      name: user.levelCode ? user.levelCode.name : ``,
+                  }
+                : {
+                      code: '',
+                      name: '',
+                  },
+            status: user.statusCode
+                ? {
+                      code: user.statusCode ? user.statusCode.code_id : ``,
+                      name: user.statusCode ? user.statusCode.name : ``,
+                  }
+                : {
+                      code: '',
+                      name: '',
+                  },
+            profile: {
+                image: user.profile && user.profile.media ? `${Config.MEDIA_HOSTNAME}${user.profile.media.path}/${user.profile.media.filename}` : ``,
+            },
+        };
+    } else {
+        return {
+            uid: user.uid,
+            nickname: user.nickname,
+            profile: {
+                image: user.profile && user.profile.media ? `${Config.MEDIA_HOSTNAME}${user.profile.media.path}/${user.profile.media.filename}` : ``,
+            },
+        };
+    }
 };

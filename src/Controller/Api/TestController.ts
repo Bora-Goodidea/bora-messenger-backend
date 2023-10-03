@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { SuccessResponse } from '@Commons/ResponseProvider';
-import { generateUUID, generateHexRandString } from '@Helper';
+import { generateUUID, generateHexRandString, generateShaHashString } from '@Helper';
 
 // 기본 테스트.
 export const Default = async (req: Request, res: Response): Promise<Response> => {
@@ -12,5 +12,6 @@ export const RandomString = async (req: Request, res: Response): Promise<Respons
     return SuccessResponse(res, {
         string2: generateUUID(),
         string3: generateHexRandString(),
+        string4: generateShaHashString('test1'),
     });
 };

@@ -35,7 +35,7 @@ export class MessengerTarget1695704530152 implements MigrationInterface {
             new TableIndex({
                 name: 'IDX_MESSENGER_TARGET',
                 columnNames: ['room_id', 'user_id'],
-                isUnique: true,
+                isUnique: false,
             }),
         );
 

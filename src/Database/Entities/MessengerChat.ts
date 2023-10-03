@@ -8,7 +8,7 @@ export enum StatusTypeEnum {
 }
 
 @Entity()
-export class MessengerChart extends BaseEntity {
+export class MessengerChat extends BaseEntity {
     @PrimaryGeneratedColumn('increment')
     id: number;
 
@@ -22,7 +22,7 @@ export class MessengerChart extends BaseEntity {
     target_id: number;
 
     @Column({ type: `varchar`, nullable: false, length: 255, unique: true })
-    chart_code: string;
+    chat_code: string;
 
     @Column({ type: `text`, nullable: false })
     message: string;

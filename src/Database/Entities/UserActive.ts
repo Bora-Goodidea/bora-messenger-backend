@@ -18,10 +18,10 @@ export class UserActive extends BaseEntity {
     active: string;
 
     @Column({ type: `timestamp`, nullable: false })
-    updated_at: Date;
+    updated_at: string;
 
     @Column({ type: `timestamp`, nullable: false })
-    created_at: Date;
+    created_at: string;
 
     @OneToOne(() => Users, (User) => User.id, { cascade: true })
     @JoinColumn({ name: `user_id` })

@@ -16,12 +16,14 @@ import {
 import { RestAuthenticateMiddleware } from '@Middlewares/RestAuthenticateMiddleware';
 import { MyProfile, ProfileEdit, Members } from '@Controllers/Api/MemberController';
 import { ImageCreate } from '@Controllers/Api/MediaController';
+import { MessengerCreate, MessengerRoomList } from '@Controllers/Api/MessengerController';
 
 export const TestsRouter = Router();
 export const SystemRouter = Router();
 export const AuthRouter = Router();
 export const MemberRouter = Router();
 export const MediaRouter = Router();
+export const MessengerRouter = Router();
 
 /* 테스트 Router */
 TestsRouter.get('/default', Default);
@@ -52,3 +54,7 @@ MemberRouter.get('/member-list', RestAuthenticateMiddleware, Members);
 
 /* Media Router */
 MediaRouter.post('/image-create', RestAuthenticateMiddleware, ImageCreate);
+
+/* Messenger Router */
+MessengerRouter.post('/messenger-create', RestAuthenticateMiddleware, MessengerCreate);
+MessengerRouter.get('/messenger-room-list', RestAuthenticateMiddleware, MessengerRoomList);

@@ -1,8 +1,8 @@
 import { MigrationInterface, QueryRunner, Table, TableForeignKey, TableIndex } from 'typeorm';
 
-const tableName = `messenger_chart`;
+const tableName = `messenger_chat`;
 
-export class MessengerChart1695693742894 implements MigrationInterface {
+export class MessengerChat1695693742894 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.createTable(
             new Table({
@@ -31,7 +31,7 @@ export class MessengerChart1695693742894 implements MigrationInterface {
                         isNullable: true,
                     },
                     {
-                        name: 'chart_code',
+                        name: 'chat_code',
                         type: 'varchar',
                         length: '255',
                         isNullable: false,
@@ -69,7 +69,7 @@ export class MessengerChart1695693742894 implements MigrationInterface {
             tableName,
             new TableIndex({
                 name: 'IDX_MESSENGER_CHART',
-                columnNames: ['room_id', 'user_id', 'target_id', 'chart_code'],
+                columnNames: ['room_id', 'user_id', 'target_id', 'chat_code'],
                 isUnique: true,
             }),
         );

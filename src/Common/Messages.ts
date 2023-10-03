@@ -15,6 +15,8 @@ export default {
         notFoundEmail: `존재 하지 않은 이메일 주소 입니다.`,
         emptyPassword: `패스워드를 입력해 주세요.`,
         checkPassword: `비밀번호는 4~15자 이내여야 합니다.`,
+        exitsUser: `존재 하지 않은 사용자 입니다.`,
+        exitsMessengerRoom: `이미 존재하는 메신저 입니다.`,
     },
     auth: {
         register: {

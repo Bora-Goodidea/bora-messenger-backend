@@ -16,14 +16,28 @@ export class MessengerMaster1695690803172 implements MigrationInterface {
                         generationStrategy: 'increment',
                     },
                     {
-                        name: 'room_id',
+                        name: 'user_id',
                         type: 'int',
                         isNullable: true,
                     },
                     {
-                        name: 'user_id',
-                        type: 'int',
-                        isNullable: true,
+                        name: 'room_code',
+                        type: 'varchar',
+                        length: '255',
+                        isNullable: false,
+                        isUnique: true,
+                    },
+                    {
+                        name: 'gubun_code',
+                        type: 'varchar',
+                        length: '255',
+                        isNullable: false,
+                        isUnique: true,
+                    },
+                    {
+                        name: 'updated_at',
+                        type: 'timestamp',
+                        default: 'now()',
                     },
                     {
                         name: 'created_at',
