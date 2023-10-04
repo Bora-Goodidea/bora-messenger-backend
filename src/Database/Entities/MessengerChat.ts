@@ -31,10 +31,10 @@ export class MessengerChat extends BaseEntity {
     checked: string;
 
     @Column({ type: `timestamp`, nullable: false })
-    checked_at: Date;
+    checked_at: string;
 
     @Column({ type: `timestamp`, nullable: false })
-    created_at: Date;
+    created_at: string;
 
     @OneToOne(() => MessengerMaster, (m) => m.id, { cascade: true })
     @JoinColumn({ name: `room_id` })

@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, OneToOne, OneToMany, JoinColumn } from 'typeorm';
 import { Users } from '@Entity/Users';
 import { MessengerTarget } from '@Entity/MessengerTarget';
+import { MessengerChat } from '@Entity/MessengerChat';
 
 @Entity()
 export class MessengerMaster extends BaseEntity {
@@ -28,4 +29,7 @@ export class MessengerMaster extends BaseEntity {
 
     @OneToMany(() => MessengerTarget, (mt) => mt.rooms)
     targets?: MessengerTarget[];
+
+    @OneToMany(() => MessengerChat, (mt) => mt.room)
+    chat?: MessengerChat[];
 }

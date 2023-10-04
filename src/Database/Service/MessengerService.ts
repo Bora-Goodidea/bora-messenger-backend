@@ -63,7 +63,7 @@ export const messengerRoomList = async ({ userId }: { userId: number }): Promise
     return await messengerMasterRepository.find({
         select: ['id', 'user_id', 'room_code', 'updated_at', 'created_at'],
         where: { user_id: userId },
-        relations: ['targets.user.profile.media'],
+        relations: ['targets.user.profile.media', 'chat'],
         order: { updated_at: 'DESC' },
     });
 };

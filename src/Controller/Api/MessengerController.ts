@@ -55,14 +55,16 @@ export const MessengerRoomList = async (req: Request, res: Response): Promise<Re
     return SuccessResponse(
         res,
         lodash.map(roomListTask, (room) => {
+            const lastChat = lodash.last(room.chat);
+
             return {
                 room_code: room.room_code,
                 target: lodash.map(room.targets, (target) => {
                     return target.user ? generateUserInfo({ depth: `simply`, user: target.user }) : null;
                 }),
                 chart: {
-                    content: `태스트 채팅...................`,
-                    updated_at: changeMysqlDate(`simply`, room.created_at),
+                    content: lastChat ? lastChat.message : '',
+                    updated_at: lastChat ? changeMysqlDate(`simply`, lastChat.created_at) : null,
                 },
                 created_at: changeMysqlDate(`simply`, room.created_at),
                 updated_at: changeMysqlDate(`simply`, room.updated_at),
