@@ -79,7 +79,7 @@ export class MessengerChat1695693742894 implements MigrationInterface {
             new TableIndex({
                 name: 'IDX_MESSENGER_CHART_MESSAGE',
                 columnNames: ['message'],
-                isUnique: true,
+                isUnique: false,
             }),
         );
 
