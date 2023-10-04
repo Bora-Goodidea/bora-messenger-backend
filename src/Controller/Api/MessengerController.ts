@@ -1,7 +1,14 @@
 import { Request, Response } from 'express';
 import { ClientErrorResponse, SuccessResponse } from '@Commons/ResponseProvider';
 import { getUserInfoByUid } from '@Service/UserService';
-import { messengerCreate, messengerTargetCreate, messengerExistsByGubunCode, messengerRoomList } from '@Service/MessengerService';
+import {
+    messengerCreate,
+    messengerTargetCreate,
+    messengerExistsByGubunCode,
+    messengerRoomList,
+    messengerRoomInfoByRoomCode,
+    messengerChartList,
+} from '@Service/MessengerService';
 import Messages from '@Messages';
 import { generateUUID, generateShaHashString, changeMysqlDate, generateUserInfo } from '@Helper';
 import lodash from 'lodash';
@@ -71,4 +78,113 @@ export const MessengerRoomList = async (req: Request, res: Response): Promise<Re
             };
         }),
     );
+};
+
+// 채팅 리스트
+export const MessengerChatList = async (req: Request, res: Response): Promise<Response> => {
+    const userId = req.app.locals.user.user_id;
+    const { roomCode } = req.params;
+
+    const messenger = await messengerRoomInfoByRoomCode({ userId: userId, roomCode: roomCode });
+
+    if (!messenger) {
+        return ClientErrorResponse(res, Messages.common.exitsMessenger);
+    }
+
+    const chats = await messengerChartList({ roomId: messenger.id });
+
+    // TODO: 리스트 조합
+
+    // lodash.map(chats, (chat) => {
+    //     return {
+    //         location: chat.user_id === userId ? `right` : `left`,
+    //         chat_code: chat.chat_code,
+    //         message_type: {
+    //             code: chat.messageType ? chat.messageType.code_id : null,
+    //             name: chat.messageType ? chat.messageType.name : null,
+    //         },
+    //         message: chat.message,
+    //         user: chat.user ? generateUserInfo({ depth: `simply`, user: chat.user }) : null,
+    //         checked: chat.checked,
+    //         created_at: changeMysqlDate(`simply`, chat.created_at),
+    //     };
+    // }),
+    //     async (chat) => {
+    //         const date: string = chat.created_at.format.step4 ? chat.created_at.format.step4 : dateKey;
+    //
+    //         if (dateKey !== date) {
+    //             dateKey = date;
+    //
+    //             console.debug(dateKey);
+    //         }
+    //
+    //         // lodash.merge(chatList, { [dateKey]: chat });
+    //
+    //         const state = lodash.mapKeys(chat, 'created_at.format.step4');
+    //         // chatList = lodash.assign(chatList[date], chat);
+    //
+    //         if (!chatList[date]) {
+    //             chatList[date] = [];
+    //         }
+    //         await chatList[date].push(chat);
+    //     },
+    //     console.debug(chatList);
+
+    // console.debug(chatList);
+
+    // const tempCharts = lodash.map(chats, (chat) => {
+    //     return {
+    //         location: chat.user_id === userId ? `right` : `left`,
+    //         chat_code: chat.chat_code,
+    //         message_type: {
+    //             code: chat.messageType ? chat.messageType.code_id : null,
+    //             name: chat.messageType ? chat.messageType.name : null,
+    //         },
+    //         message: chat.message,
+    //         user: chat.user ? generateUserInfo({ depth: `simply`, user: chat.user }) : null,
+    //         checked: chat.checked,
+    //         created_at: changeMysqlDate(`simply`, chat.created_at),
+    //     };
+    // });
+
+    let dateKey: string = '';
+    // const chatList = [];
+
+    for await (const chatLoop of lodash.map(chats, (chat) => {
+        return {
+            location: chat.user_id === userId ? `right` : `left`,
+            chat_code: chat.chat_code,
+            message_type: {
+                code: chat.messageType ? chat.messageType.code_id : null,
+                name: chat.messageType ? chat.messageType.name : null,
+            },
+            message: chat.message,
+            user: chat.user ? generateUserInfo({ depth: `simply`, user: chat.user }) : null,
+            checked: chat.checked,
+            created_at: changeMysqlDate(`simply`, chat.created_at),
+        };
+    })) {
+        const date: string = chatLoop.created_at.format.step4 ? chatLoop.created_at.format.step4 : dateKey;
+
+        if (dateKey !== date) {
+            dateKey = date;
+
+            console.debug(dateKey);
+        }
+
+        // if (!chatList[date]) {
+        // chatList[date] = [];
+        // }
+        // await chatList[date].push(chatLoop);
+    }
+
+    return SuccessResponse(res, {
+        messenger: {
+            room_code: messenger.room_code,
+            target: lodash.map(messenger.targets, (target) => {
+                return target.user ? generateUserInfo({ depth: `simply`, user: target.user }) : null;
+            }),
+        },
+        chat: [],
+    });
 };

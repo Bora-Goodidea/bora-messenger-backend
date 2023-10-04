@@ -10,6 +10,8 @@ console.debug(`#################################################################
 (async () => {
     const conn = await MysqlConnect.getConnection();
 
+    const imageUrl = `https://unsplash.com/photos/8--kuxbxuKU/download?force=true&w=640`;
+
     const [messengerResult] = await conn.query(`select * from messenger_master`);
 
     if (!messengerResult) {
@@ -37,15 +39,24 @@ console.debug(`#################################################################
             const userId = randTarget[0];
             const targetId = randTarget[1];
             const chatCode = generateHexRandString();
-            const generateWord = generateWords(Math.floor(Math.random() * 50) + 10);
+
+            let message = ``;
+            let messageType = ``;
+            if (Math.floor(Math.random() * 10) + 1 === 1) {
+                messageType = '040020';
+                message = imageUrl;
+            } else {
+                messageType = '040010';
+                message = generateWords(Math.floor(Math.random() * 50) + 10);
+            }
 
             Logger.console(
                 `${String(chartCount).padStart(2, `0`)} of ${String(ranmdomLoop).padStart(2, `0`)} ${String(chatLoop ? chatLoop : '')} : ${String(
                     userId,
-                ).padStart(2, `0`)} to ${String(targetId).padStart(2, `0`)} : generateWords: ${generateWord}`,
+                ).padStart(2, `0`)} to ${String(targetId).padStart(2, `0`)} -> messageType: ${messageType}, message: ${message}`,
             );
             await conn.query(
-                `insert into messenger_chat (room_id, user_id, target_id, chat_code, message, checked, checked_at, created_at) values ('${room.id}', '${userId}', '${targetId}', '${chatCode}', '${generateWord}', 'N', null, now());`,
+                `insert into messenger_chat (room_id, user_id, target_id, chat_code, message_type, message, checked, checked_at, created_at) values ('${room.id}', '${userId}', '${targetId}', '${chatCode}', '${messageType}', '${message}', 'N', null, now());`,
             );
         }
     }

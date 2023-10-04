@@ -136,6 +136,8 @@ export const changeMysqlDate = (
                 step2: `${dateYear}년 ${dateMonth + 1}월 ${dateDate}일 ${
                     days[convertDate.getDay()]
                 }요일 ${convertDate.getHours()}시 ${convertDate.getMinutes()}분`,
+                step3: `${dateYear}년 ${dateMonth + 1}월 ${dateDate}일 ${days[convertDate.getDay()]}요일 ${convertDate.getHours()}시`,
+                step4: `${dateYear}년 ${dateMonth + 1}월 ${dateDate}일 ${days[convertDate.getDay()]}요일`,
             },
         };
     }

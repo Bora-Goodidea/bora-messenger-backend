@@ -27,4 +27,12 @@ export default [
             { id: `999`, name: `최고 관리자` },
         ],
     },
+    {
+        id: `040`,
+        name: `메시지 타입`,
+        list: [
+            { id: `010`, name: `text` },
+            { id: `020`, name: `image` },
+        ],
+    },
 ];
