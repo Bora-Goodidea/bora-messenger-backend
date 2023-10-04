@@ -70,7 +70,6 @@ export const Members = async (req: Request, res: Response): Promise<Response> =>
             const createdAt = changeMysqlDate(`simply`, user.created_at);
             const updatedAt = changeMysqlDate(`simply`, user.updated_at);
             return {
-                id: userInfo.id,
                 uid: userInfo.uid,
                 type: userInfo.type,
                 level: userInfo.level,
