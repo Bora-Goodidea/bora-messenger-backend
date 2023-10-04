@@ -23,8 +23,11 @@ export const MessengerCreate = async (req: Request, res: Response): Promise<Resp
         targetIdList.push(user.id);
     }
 
+    // 타겟에 자신 포함.
+    const targetSortList: Array<number> = lodash.sortBy([...targetIdList, userId]);
+
     // gubun 코드를 이용해서 중복 체크
-    const roomGugunCode = generateShaHashString(lodash.sortBy([...targetIdList, userId]).join(`,`));
+    const roomGugunCode = generateShaHashString(targetSortList.join(`,`));
     const roomExxists = await messengerExistsByGubunCode({ gubunCode: roomGugunCode });
     if (roomExxists > 0) {
         return ClientErrorResponse(res, Messages.common.exitsMessengerRoom);
@@ -34,7 +37,7 @@ export const MessengerCreate = async (req: Request, res: Response): Promise<Resp
     const createRoom = await messengerCreate({ userId: userId, roomCode: roomCode, gubunCode: roomGugunCode });
 
     // target 등록
-    for await (const targetId of lodash.sortBy(targetIdList)) {
+    for await (const targetId of targetSortList) {
         await messengerTargetCreate({ roomId: createRoom.id, userId: targetId });
     }
 
@@ -43,6 +46,7 @@ export const MessengerCreate = async (req: Request, res: Response): Promise<Resp
     });
 };
 
+// 채팅방 리스트
 export const MessengerRoomList = async (req: Request, res: Response): Promise<Response> => {
     const userId = req.app.locals.user.user_id;
 
