@@ -91,93 +91,26 @@ export const MessengerChatList = async (req: Request, res: Response): Promise<Re
         return ClientErrorResponse(res, Messages.common.exitsMessenger);
     }
 
-    const chats = await messengerChartList({ roomId: messenger.id });
-
-    // TODO: 리스트 조합
-
-    // lodash.map(chats, (chat) => {
-    //     return {
-    //         location: chat.user_id === userId ? `right` : `left`,
-    //         chat_code: chat.chat_code,
-    //         message_type: {
-    //             code: chat.messageType ? chat.messageType.code_id : null,
-    //             name: chat.messageType ? chat.messageType.name : null,
-    //         },
-    //         message: chat.message,
-    //         user: chat.user ? generateUserInfo({ depth: `simply`, user: chat.user }) : null,
-    //         checked: chat.checked,
-    //         created_at: changeMysqlDate(`simply`, chat.created_at),
-    //     };
-    // }),
-    //     async (chat) => {
-    //         const date: string = chat.created_at.format.step4 ? chat.created_at.format.step4 : dateKey;
-    //
-    //         if (dateKey !== date) {
-    //             dateKey = date;
-    //
-    //             console.debug(dateKey);
-    //         }
-    //
-    //         // lodash.merge(chatList, { [dateKey]: chat });
-    //
-    //         const state = lodash.mapKeys(chat, 'created_at.format.step4');
-    //         // chatList = lodash.assign(chatList[date], chat);
-    //
-    //         if (!chatList[date]) {
-    //             chatList[date] = [];
-    //         }
-    //         await chatList[date].push(chat);
-    //     },
-    //     console.debug(chatList);
-
-    // console.debug(chatList);
-
-    // const tempCharts = lodash.map(chats, (chat) => {
-    //     return {
-    //         location: chat.user_id === userId ? `right` : `left`,
-    //         chat_code: chat.chat_code,
-    //         message_type: {
-    //             code: chat.messageType ? chat.messageType.code_id : null,
-    //             name: chat.messageType ? chat.messageType.name : null,
-    //         },
-    //         message: chat.message,
-    //         user: chat.user ? generateUserInfo({ depth: `simply`, user: chat.user }) : null,
-    //         checked: chat.checked,
-    //         created_at: changeMysqlDate(`simply`, chat.created_at),
-    //     };
-    // });
-
-    let dateKey: string = '';
-    // const chatList = [];
-
-    for await (const chatLoop of lodash.map(chats, (chat) => {
+    const chats = lodash.map(await messengerChartList({ roomId: messenger.id }), (chat) => {
+        const created_at = changeMysqlDate(`simply`, chat.created_at);
         return {
-            location: chat.user_id === userId ? `right` : `left`,
-            chat_code: chat.chat_code,
-            message_type: {
-                code: chat.messageType ? chat.messageType.code_id : null,
-                name: chat.messageType ? chat.messageType.name : null,
+            date: `${created_at.format.step4}`,
+            item: {
+                location: chat.user_id === userId ? `right` : `left`,
+                chat_code: chat.chat_code,
+                message_type: {
+                    code: chat.messageType ? chat.messageType.code_id : null,
+                    name: chat.messageType ? chat.messageType.name : null,
+                },
+                message: chat.message,
+                user: chat.user ? generateUserInfo({ depth: `simply`, user: chat.user }) : null,
+                checked: chat.checked,
+                created_at: created_at,
             },
-            message: chat.message,
-            user: chat.user ? generateUserInfo({ depth: `simply`, user: chat.user }) : null,
-            checked: chat.checked,
-            created_at: changeMysqlDate(`simply`, chat.created_at),
         };
-    })) {
-        const date: string = chatLoop.created_at.format.step4 ? chatLoop.created_at.format.step4 : dateKey;
+    });
 
-        if (dateKey !== date) {
-            dateKey = date;
-
-            console.debug(dateKey);
-        }
-
-        // if (!chatList[date]) {
-        // chatList[date] = [];
-        // }
-        // await chatList[date].push(chatLoop);
-    }
-
+    // TODO: chat 상세 리스트에 사용자 별로? 리스트 묶을필요.
     return SuccessResponse(res, {
         messenger: {
             room_code: messenger.room_code,
@@ -185,6 +118,16 @@ export const MessengerChatList = async (req: Request, res: Response): Promise<Re
                 return target.user ? generateUserInfo({ depth: `simply`, user: target.user }) : null;
             }),
         },
-        chat: [],
+        chat: lodash.map(lodash.union(lodash.map(chats, (e) => e.item.created_at.format.step4)), (date) => {
+            return {
+                date: date,
+                list: lodash.map(
+                    lodash.filter(chats, (e) => e.date === `${date}`),
+                    (e) => {
+                        return e.item;
+                    },
+                ),
+            };
+        }),
     });
 };
