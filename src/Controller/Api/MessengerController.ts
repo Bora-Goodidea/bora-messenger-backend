@@ -12,6 +12,7 @@ import {
 import Messages from '@Messages';
 import { generateUUID, generateShaHashString, changeMysqlDate, generateUserInfo } from '@Helper';
 import lodash from 'lodash';
+import { ChatItemResponseInterface } from '@Types/CommonTypes';
 
 // 메신저 방 생성
 export const MessengerCreate = async (req: Request, res: Response): Promise<Response> => {
@@ -91,6 +92,11 @@ export const MessengerChatList = async (req: Request, res: Response): Promise<Re
         return ClientErrorResponse(res, Messages.common.exitsMessenger);
     }
 
+    /**
+     * 순서
+     * 1. 디비에서 리스트를 뽑아와서 날짜별로 오브젝트 생성
+     * 2. 날짜별로 조합한 데이트를 순서대로 다시 조합 이때 같은 사용자끼리 배열로 리스트 생성
+     */
     const chats = lodash.map(await messengerChartList({ roomId: messenger.id }), (chat) => {
         const created_at = changeMysqlDate(`simply`, chat.created_at);
         return {
@@ -110,7 +116,6 @@ export const MessengerChatList = async (req: Request, res: Response): Promise<Re
         };
     });
 
-    // TODO: chat 상세 리스트에 사용자 별로? 리스트 묶을필요.
     return SuccessResponse(res, {
         messenger: {
             room_code: messenger.room_code,
@@ -121,12 +126,53 @@ export const MessengerChatList = async (req: Request, res: Response): Promise<Re
         chat: lodash.map(lodash.union(lodash.map(chats, (e) => e.item.created_at.format.step4)), (date) => {
             return {
                 date: date,
-                list: lodash.map(
-                    lodash.filter(chats, (e) => e.date === `${date}`),
-                    (e) => {
-                        return e.item;
-                    },
-                ),
+                list: (() => {
+                    const returnData: ChatItemResponseInterface = {};
+                    const list = lodash.forEach(
+                        lodash.map(
+                            lodash.filter(chats, (e) => e.date === `${date}`),
+                            (e) => {
+                                return e.item;
+                            },
+                        ),
+                        (e) => {
+                            if (e.user) {
+                                if (!returnData[e.user.uid]) {
+                                    returnData[e.user.uid] = {
+                                        location: e.location,
+                                        user: {
+                                            uid: e.user.uid,
+                                            nickname: e.user.nickname,
+                                            profile: e.user.profile,
+                                        },
+                                        message: [],
+                                    };
+                                }
+
+                                returnData[e.user.uid].message.push({
+                                    type: e.message_type,
+                                    checked: e.checked,
+                                    contents: e.message,
+                                    chats: (() => {
+                                        return {
+                                            origin: e.created_at.origin,
+                                            format: {
+                                                step1: e.created_at.format.step1,
+                                                step2: e.created_at.format.step2,
+                                                step3: e.created_at.format.step3,
+                                                step4: e.created_at.format.step4,
+                                            },
+                                        };
+                                    })(),
+                                });
+                            }
+                        },
+                    );
+
+                    Promise.allSettled(list);
+
+                    return returnData;
+                })(),
             };
         }),
     });
