@@ -28,8 +28,10 @@ export const MyProfile = async (req: Request, res: Response): Promise<Response> 
 
 // 프로필 변경
 export const ProfileEdit = async (req: Request, res: Response): Promise<Response> => {
-    const { profileImage, nickname } = req.body;
+    const { profileImage: profileImageId, nickname } = req.body;
     const userId = req.app.locals.user.user_id;
+
+    const profileImage = Number(profileImageId);
 
     if (_.isEmpty(nickname)) {
         return ClientErrorResponse(res, Messages.member.profile.emptyNickName);
