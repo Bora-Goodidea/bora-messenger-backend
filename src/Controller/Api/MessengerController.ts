@@ -8,6 +8,8 @@ import {
     messengerRoomList,
     messengerRoomInfoByRoomCode,
     messengerChartList,
+    messengerChartInfoByChatCode,
+    messengerChartChecked,
 } from '@Service/MessengerService';
 import Messages from '@Messages';
 import { generateUUID, generateShaHashString, changeMysqlDate, generateUserInfo } from '@Helper';
@@ -98,7 +100,7 @@ export const MessengerChatList = async (req: Request, res: Response): Promise<Re
      * 2. 날짜별로 조합한 데이트를 순서대로 다시 조합 이때 같은 사용자끼리 배열로 리스트 생성
      */
     const chats = lodash.map(await messengerChartList({ roomId: messenger.id }), (chat) => {
-        const checked_at = chat.checked_at ? changeMysqlDate(`simply`, chat.checked_at) : null;
+        const checked_at = chat.checked === 'Y' ? changeMysqlDate(`simply`, chat.checked_at) : null;
         const created_at = changeMysqlDate(`simply`, chat.created_at);
         return {
             date: `${created_at.format.step4}`,
@@ -193,5 +195,30 @@ export const MessengerChatList = async (req: Request, res: Response): Promise<Re
                 })(),
             };
         }),
+    });
+};
+
+// 채팅 확인
+export const MessengerChatChecked = async (req: Request, res: Response): Promise<Response> => {
+    const userId = req.app.locals.user.user_id;
+    const { chart: chartCodes } = req.body;
+
+    const chatIdList: Array<number> = []; // 방 타겟 리스트
+
+    // 채팅 체크
+    for await (const chartCode of chartCodes) {
+        const char = await messengerChartInfoByChatCode({ userId: userId, chat_code: chartCode });
+        if (!char) {
+            return ClientErrorResponse(res, Messages.common.exitsChat);
+        }
+        chatIdList.push(char.id);
+    }
+
+    for await (const chatId of chatIdList) {
+        await messengerChartChecked({ chatId: chatId });
+    }
+
+    return SuccessResponse(res, {
+        chart_code: chartCodes,
     });
 };

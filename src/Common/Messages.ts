@@ -18,6 +18,7 @@ export default {
         exitsUser: `존재 하지 않은 사용자 입니다.`,
         exitsMessengerRoom: `이미 존재하는 메신저 입니다.`,
         exitsMessenger: `존재 하지 않는 메신저 입니다.`,
+        exitsChat: `존재 하지 않는 채팅 입니다.`,
     },
     auth: {
         register: {

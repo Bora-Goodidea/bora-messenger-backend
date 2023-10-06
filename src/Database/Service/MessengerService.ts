@@ -2,6 +2,8 @@ import AppDataSource from '@Database/AppDataSource';
 import { MessengerMaster } from '@Entity/MessengerMaster';
 import { MessengerTarget } from '@Entity/MessengerTarget';
 import { MessengerChat } from '@Entity/MessengerChat';
+import { UpdateResult } from 'typeorm';
+import { toMySqlDatetime } from '@Helper';
 
 const messengerMasterRepository = AppDataSource.getRepository(MessengerMaster);
 const messengerTargetRepository = AppDataSource.getRepository(MessengerTarget);
@@ -89,9 +91,29 @@ export const messengerRoomInfoByRoomCode = async ({ userId, roomCode }: { userId
  */
 export const messengerChartList = async ({ roomId }: { roomId: number }): Promise<Array<MessengerChat>> => {
     return await MessengerChatRepository.find({
-        select: ['id', 'user_id', 'target_id', 'chat_code', 'message_type', 'message', 'checked', 'created_at'],
+        select: ['id', 'user_id', 'target_id', 'chat_code', 'message_type', 'message', 'checked', 'checked_at', 'created_at'],
         where: { room_id: roomId },
         relations: ['user.profile.media', 'messageType'],
         order: { created_at: 'ASC' },
     });
+};
+
+/**
+ * 채팅코드로 채팅 정보 조회
+ * @param userId
+ * @param chat_code
+ */
+export const messengerChartInfoByChatCode = async ({ userId, chat_code }: { userId: number; chat_code: string }): Promise<MessengerChat | null> => {
+    return await MessengerChatRepository.findOne({
+        select: ['id', 'user_id', 'target_id', 'chat_code', 'message_type', 'message', 'checked', 'created_at'],
+        where: { chat_code: chat_code, user_id: userId },
+    });
+};
+
+/**
+ * 채팅 읽음 확인
+ * @param chatId
+ */
+export const messengerChartChecked = async ({ chatId }: { chatId: number }): Promise<UpdateResult> => {
+    return await MessengerChatRepository.update({ id: chatId }, { checked: 'Y', checked_at: toMySqlDatetime(new Date()) });
 };
