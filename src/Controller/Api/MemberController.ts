@@ -1,11 +1,12 @@
 import { Request, Response } from 'express';
 import { ClientErrorResponse, SuccessDefault, SuccessResponse } from '@Commons/ResponseProvider';
-import { getUserProfile, profileNickNameExits, updateProfile, updateProfileImage } from '@Service/UserService';
+import { getUserProfile, profileNickNameExits, updateProfile, updateProfileImage, userListExceptMe } from '@Service/UserService';
 import Config from '@Commons/Config';
-import _ from 'lodash';
+import lodash from 'lodash';
 import Messages from '@Commons/Messages';
 import { mediaExits } from '@Database/Service/MediaService';
 import { Logger } from '@Commons/Logger';
+import { changeMysqlDate, generateUserInfo } from '@Helper';
 
 // 내 프로필
 export const MyProfile = async (req: Request, res: Response): Promise<Response> => {
@@ -33,7 +34,7 @@ export const ProfileEdit = async (req: Request, res: Response): Promise<Response
 
     const profileImage = Number(profileImageId);
 
-    if (_.isEmpty(nickname)) {
+    if (lodash.isEmpty(nickname)) {
         return ClientErrorResponse(res, Messages.member.profile.emptyNickName);
     }
 
@@ -44,7 +45,7 @@ export const ProfileEdit = async (req: Request, res: Response): Promise<Response
     }
 
     // 이미지 업데이트
-    if (_.isNumber(profileImage)) {
+    if (lodash.isNumber(profileImage)) {
         const checkMedia = await mediaExits({ user_id: userId, id: profileImage });
         if (checkMedia === 0) {
             Logger.error(`ProfileEdit: checkMedia error`);
@@ -57,4 +58,34 @@ export const ProfileEdit = async (req: Request, res: Response): Promise<Response
     await updateProfile({ user_id: userId, nickname: nickname });
 
     return SuccessDefault(res);
+};
+
+// 회원 목록
+export const Members = async (req: Request, res: Response): Promise<Response> => {
+    const userId = req.app.locals.user.user_id;
+    const task = await userListExceptMe({ user_id: userId });
+    return SuccessResponse(
+        res,
+        lodash.map(task, (user) => {
+            const userInfo = generateUserInfo({ depth: `detail`, user: user });
+
+            const createdAt = changeMysqlDate(`simply`, user.created_at);
+            const updatedAt = changeMysqlDate(`simply`, user.updated_at);
+            return {
+                uid: userInfo.uid,
+                type: userInfo.type,
+                level: userInfo.level,
+                status: userInfo.status,
+                email: userInfo.email,
+                nickname: userInfo.nickname,
+                profile: userInfo.profile,
+                active: {
+                    state: user.active ? user.active.active : 'N',
+                    updated_at: user.active ? changeMysqlDate(`simply`, user.active.updated_at) : null,
+                },
+                created_at: createdAt,
+                updated_at: updatedAt,
+            };
+        }),
+    );
 };

@@ -40,6 +40,7 @@ export const profileNickNameExits = async ({ user_id, nickname }: { user_id: num
 
 /**
  * 사용자 등록
+ * @param uid
  * @param type
  * @param level
  * @param status
@@ -48,6 +49,7 @@ export const profileNickNameExits = async ({ user_id, nickname }: { user_id: num
  * @param nickname
  */
 export const userCreate = async ({
+    uid,
     type,
     level,
     status,
@@ -55,6 +57,7 @@ export const userCreate = async ({
     password,
     nickname,
 }: {
+    uid: string;
     type: string;
     level: string;
     status: string;
@@ -64,6 +67,7 @@ export const userCreate = async ({
 }): Promise<Users> => {
     return userRepository.save(
         {
+            uid: uid,
             type: type,
             level: level,
             status: status,
@@ -166,4 +170,46 @@ export const updateProfile = async ({ user_id, nickname }: { user_id: number; ni
             updated_at: toMySqlDatetime(new Date()),
         },
     );
+};
+
+/**
+ * 사용자 전체 리스트 ( 본인 포함 )
+ */
+export const userAllList = async (): Promise<Users[] | null> => {
+    return await userRepository.find({
+        select: [`id`, `uid`, `type`, `level`, `status`, `email`, `nickname`, `email_verified_at`, `updated_at`, `created_at`],
+        relations: ['typeCode', 'levelCode', 'statusCode', 'profile', 'profile.media', 'active'],
+    });
+};
+
+/**
+ * 사용자 전체 리스트 ( 본인제외 )
+ */
+export const userListExceptMe = async ({ user_id }: { user_id: number }): Promise<Users[] | null> => {
+    return await userRepository.find({
+        select: [`id`, `uid`, `type`, `level`, `status`, `email`, `nickname`, `email_verified_at`, `updated_at`, `created_at`],
+        where: { id: Not(user_id) },
+        relations: ['typeCode', 'levelCode', 'statusCode', 'profile', 'profile.media', 'active'],
+    });
+};
+
+/**
+ * uid 로 사용자 정보 조회
+ * @param uid
+ */
+export const getUserInfoByUid = async ({ uid }: { uid: string }): Promise<Users | null> => {
+    return await userRepository.findOne({
+        select: [`id`, `uid`, `type`, `level`, `status`, `email`, `nickname`, `email_verified_at`, `updated_at`, `created_at`],
+        where: { uid: uid },
+    });
+};
+
+/**
+ * 사용자 uid 존재 확인
+ * @param uid
+ */
+export const uidExists = async ({ uid }: { uid: string }): Promise<number> => {
+    const task = await userRepository.find({ select: ['id'], where: { uid: uid } });
+
+    return task.length;
 };
