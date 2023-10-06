@@ -18,6 +18,7 @@ export interface ChatItemResponseInterface {
                 code: string | null;
                 name: string | null;
             };
+            chat_code: string;
             contents: string;
             checked: string | 'N' | `Y`;
             checked_at: {

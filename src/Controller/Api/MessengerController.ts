@@ -153,6 +153,7 @@ export const MessengerChatList = async (req: Request, res: Response): Promise<Re
 
                                 returnData[e.user.uid].message.push({
                                     type: e.message_type,
+                                    chat_code: e.chat_code,
                                     contents: e.message,
                                     checked: e.checked,
                                     checked_at: (() => {
