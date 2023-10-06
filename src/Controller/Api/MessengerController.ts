@@ -98,6 +98,7 @@ export const MessengerChatList = async (req: Request, res: Response): Promise<Re
      * 2. 날짜별로 조합한 데이트를 순서대로 다시 조합 이때 같은 사용자끼리 배열로 리스트 생성
      */
     const chats = lodash.map(await messengerChartList({ roomId: messenger.id }), (chat) => {
+        const checked_at = chat.checked_at ? changeMysqlDate(`simply`, chat.checked_at) : null;
         const created_at = changeMysqlDate(`simply`, chat.created_at);
         return {
             date: `${created_at.format.step4}`,
@@ -111,6 +112,7 @@ export const MessengerChatList = async (req: Request, res: Response): Promise<Re
                 message: chat.message,
                 user: chat.user ? generateUserInfo({ depth: `simply`, user: chat.user }) : null,
                 checked: chat.checked,
+                checked_at: checked_at,
                 created_at: created_at,
             },
         };
@@ -151,9 +153,24 @@ export const MessengerChatList = async (req: Request, res: Response): Promise<Re
 
                                 returnData[e.user.uid].message.push({
                                     type: e.message_type,
-                                    checked: e.checked,
                                     contents: e.message,
-                                    chats: (() => {
+                                    checked: e.checked,
+                                    checked_at: (() => {
+                                        if (e.checked_at === null) {
+                                            return null;
+                                        } else {
+                                            return {
+                                                origin: e.checked_at.origin,
+                                                format: {
+                                                    step1: e.checked_at.format.step1,
+                                                    step2: e.checked_at.format.step2,
+                                                    step3: e.checked_at.format.step3,
+                                                    step4: e.checked_at.format.step4,
+                                                },
+                                            };
+                                        }
+                                    })(),
+                                    created_at: (() => {
                                         return {
                                             origin: e.created_at.origin,
                                             format: {
