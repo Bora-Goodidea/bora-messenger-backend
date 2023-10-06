@@ -48,7 +48,7 @@ export const changeMysqlDate = (
     depth: `simply` | `detail`,
     date: string,
 ): {
-    origin: Date;
+    origin?: Date;
     number?: {
         year: number;
         month: number;
@@ -74,6 +74,7 @@ export const changeMysqlDate = (
         step4?: string;
         sinceString?: string;
     };
+    sinceString: string;
 } => {
     const days = ['일', '월', '화', '수', '목', '금', '토'];
 
@@ -125,20 +126,20 @@ export const changeMysqlDate = (
                 )}:${String(dateMinutes).padStart(2, '0')}`,
                 sinceString: timeSince(convertDate),
             },
+            sinceString: timeSince(convertDate),
         };
     } else {
         return {
-            origin: convertDate,
             format: {
-                step1: `${dateYear}년 ${dateMonth + 1}월 ${dateDate}일 ${
-                    days[convertDate.getDay()]
-                }요일 ${convertDate.getHours()}시 ${convertDate.getMinutes()}분 ${convertDate.getSeconds()}초`,
+                step1: `${dateYear}년 ${dateMonth + 1}월 ${dateDate}일 ${days[convertDate.getDay()]}요일`,
                 step2: `${dateYear}년 ${dateMonth + 1}월 ${dateDate}일 ${
                     days[convertDate.getDay()]
                 }요일 ${convertDate.getHours()}시 ${convertDate.getMinutes()}분`,
-                step3: `${dateYear}년 ${dateMonth + 1}월 ${dateDate}일 ${days[convertDate.getDay()]}요일 ${convertDate.getHours()}시`,
-                step4: `${dateYear}년 ${dateMonth + 1}월 ${dateDate}일 ${days[convertDate.getDay()]}요일`,
+                step3: `${dateYear}년 ${dateMonth + 1}월 ${dateDate}일 ${
+                    days[convertDate.getDay()]
+                }요일 ${convertDate.getHours()}시 ${convertDate.getMinutes()}분 ${convertDate.getSeconds()}초`,
             },
+            sinceString: timeSince(convertDate),
         };
     }
 };

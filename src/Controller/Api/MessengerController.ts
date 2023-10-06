@@ -103,7 +103,7 @@ export const MessengerChatList = async (req: Request, res: Response): Promise<Re
         const checked_at = chat.checked === 'Y' ? changeMysqlDate(`simply`, chat.checked_at) : null;
         const created_at = changeMysqlDate(`simply`, chat.created_at);
         return {
-            date: `${created_at.format.step4}`,
+            date: `${created_at.format.step1}`,
             item: {
                 location: chat.user_id === userId ? `right` : `left`,
                 chat_code: chat.chat_code,
@@ -127,7 +127,7 @@ export const MessengerChatList = async (req: Request, res: Response): Promise<Re
                 return target.user ? generateUserInfo({ depth: `simply`, user: target.user }) : null;
             }),
         },
-        chat: lodash.map(lodash.union(lodash.map(chats, (e) => e.item.created_at.format.step4)), (date) => {
+        chat: lodash.map(lodash.union(lodash.map(chats, (e) => e.item.created_at.format.step1)), (date) => {
             return {
                 date: date,
                 list: (() => {
@@ -163,25 +163,22 @@ export const MessengerChatList = async (req: Request, res: Response): Promise<Re
                                             return null;
                                         } else {
                                             return {
-                                                origin: e.checked_at.origin,
                                                 format: {
                                                     step1: e.checked_at.format.step1,
                                                     step2: e.checked_at.format.step2,
                                                     step3: e.checked_at.format.step3,
-                                                    step4: e.checked_at.format.step4,
                                                 },
                                             };
                                         }
                                     })(),
                                     created_at: (() => {
                                         return {
-                                            origin: e.created_at.origin,
                                             format: {
                                                 step1: e.created_at.format.step1,
                                                 step2: e.created_at.format.step2,
                                                 step3: e.created_at.format.step3,
-                                                step4: e.created_at.format.step4,
                                             },
+                                            sinceString: e.created_at.sinceString,
                                         };
                                     })(),
                                 });

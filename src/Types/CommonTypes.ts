@@ -22,22 +22,19 @@ export interface ChatItemResponseInterface {
             contents: string;
             checked: string | 'N' | `Y`;
             checked_at: {
-                origin: Date;
                 format: {
                     step1: string;
                     step2: string;
                     step3: string | undefined;
-                    step4: string | undefined;
                 };
             } | null;
             created_at: {
-                origin: Date;
                 format: {
                     step1: string;
                     step2: string;
                     step3: string | undefined;
-                    step4: string | undefined;
                 };
+                sinceString: string;
             };
         }>;
     };
