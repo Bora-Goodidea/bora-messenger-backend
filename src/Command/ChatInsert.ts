@@ -29,7 +29,7 @@ console.debug(`#################################################################
         }
 
         // 5~50 난수 발생
-        const ranmdomLoop = Math.floor(Math.random() * 5) + 5;
+        const ranmdomLoop = Math.floor(Math.random() * 20) + 5;
 
         let chartCount = 0;
         for await (const chatLoop of [...Array(ranmdomLoop)]) {
@@ -47,7 +47,7 @@ console.debug(`#################################################################
                 message = imageUrl;
             } else {
                 messageType = '040010';
-                message = generateWords(Math.floor(Math.random() * 50) + 10);
+                message = generateWords(Math.floor(Math.random() * 10) + 10);
             }
 
             Logger.console(
