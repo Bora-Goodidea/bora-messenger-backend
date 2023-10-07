@@ -14,7 +14,7 @@ console.debug(`#################################################################
 
     const [messengerResult] = await conn.query(`select * from messenger_master`);
 
-    if (!messengerResult) {
+    if (lodash.isEmpty(messengerResult)) {
         console.log('messenger 를 먼저 등록해야 합니다..');
         exit();
     }
@@ -29,7 +29,7 @@ console.debug(`#################################################################
         }
 
         // 5~50 난수 발생
-        const ranmdomLoop = Math.floor(Math.random() * 50) + 5;
+        const ranmdomLoop = Math.floor(Math.random() * 5) + 5;
 
         let chartCount = 0;
         for await (const chatLoop of [...Array(ranmdomLoop)]) {
@@ -42,7 +42,7 @@ console.debug(`#################################################################
 
             let message = ``;
             let messageType = ``;
-            if (Math.floor(Math.random() * 10) + 1 === 1) {
+            if (Math.floor(Math.random() * 5) + 1 === 1) {
                 messageType = '040020';
                 message = imageUrl;
             } else {
