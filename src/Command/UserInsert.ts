@@ -14,15 +14,17 @@ console.debug(`#################################################################
     await conn.query(`truncate table users;`);
     await conn.query(`truncate table email_auth;`);
     await conn.query(`truncate table auth_token;`);
-    await conn.query(`truncate table messenger_chart;`);
+    await conn.query(`truncate table messenger_chat;`);
     await conn.query(`truncate table messenger_master;`);
     await conn.query(`truncate table password_reset;`);
+    await conn.query(`truncate table user_active;`);
     await conn.query(`truncate table profile;`);
+    await conn.query(`truncate table messenger_target;`);
 
     await conn.query(`SET FOREIGN_KEY_CHECKS = 1;`);
 
     let count = 0;
-    for await (const loop of [...Array(50)]) {
+    for await (const loop of [...Array(10)]) {
         count = count + 1;
 
         const uid = generateUUID();
@@ -51,7 +53,7 @@ console.debug(`#################################################################
         }
 
         const [profileResult] = await conn.query(
-            `insert into profile (user_id, profile_image_id, updated_at, created_at) values ('${insertId}', 1, now(), now());`,
+            `insert into profile (user_id, profile_image_id, updated_at, created_at) values ('${insertId}', ${count + 1}, now(), now());`,
         );
         if (!profileResult) {
             Logger.error(`${count} ${loop} ${email} profile insert error...`);

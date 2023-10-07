@@ -43,12 +43,25 @@ console.debug(`#################################################################
     const [result] = await conn.query(`select * from media order by id asc limit 0,1`);
     if (lodash.isEmpty(result)) {
         console.debug(`:::::::::::::::::::::::::::::Media Start::::::::::::::::::::::::::::::`);
-        const [inertResult] = await conn.query(
-            `insert into media (type, path, filename, origin_name, size, created_at) values ('image/jpeg', '/profile', 'default_profile.jpg', 'default_profile.jpg', 28350, now());`,
-        );
-        if (!inertResult) {
-            console.debug('media insert error...');
-            exit();
+        const queries = [
+            `insert into media (type, path, filename, origin_name, size, created_at) values ('image/jpeg', '/profile', 'default_profile.jpg', 'default_profile.jpg', 28350, now())`,
+            `insert into media (type, path, filename, origin_name, size, created_at) values ('image/jpeg', '/profile', 'profile1.jpeg', 'profile1.jpeg', 28350, now())`,
+            `insert into media (type, path, filename, origin_name, size, created_at) values ('image/jpeg', '/profile', 'profile2.jpeg', 'profile2.jpeg', 28350, now())`,
+            `insert into media (type, path, filename, origin_name, size, created_at) values ('image/jpeg', '/profile', 'profile3.jpeg', 'profile3.jpeg', 28350, now())`,
+            `insert into media (type, path, filename, origin_name, size, created_at) values ('image/jpeg', '/profile', 'profile4.jpeg', 'profile4.jpeg', 28350, now())`,
+            `insert into media (type, path, filename, origin_name, size, created_at) values ('image/jpeg', '/profile', 'profile5.jpeg', 'profile5.jpeg', 28350, now())`,
+            `insert into media (type, path, filename, origin_name, size, created_at) values ('image/jpeg', '/profile', 'profile6.jpeg', 'profile6.jpeg', 28350, now())`,
+            `insert into media (type, path, filename, origin_name, size, created_at) values ('image/jpeg', '/profile', 'profile7.jpeg', 'profile7.jpeg', 28350, now())`,
+            `insert into media (type, path, filename, origin_name, size, created_at) values ('image/jpeg', '/profile', 'profile8.jpeg', 'profile8.jpeg', 28350, now())`,
+            `insert into media (type, path, filename, origin_name, size, created_at) values ('image/jpeg', '/profile', 'profile9.jpeg', 'profile9.jpeg', 28350, now())`,
+            `insert into media (type, path, filename, origin_name, size, created_at) values ('image/jpeg', '/profile', 'profile10.jpeg', 'profile10.jpeg', 28350, now())`,
+        ];
+        for (const query of queries) {
+            const [inertResult] = await conn.query(query);
+            if (!inertResult) {
+                console.debug('media insert error...');
+                exit();
+            }
         }
         console.debug(`:::::::::::::::::::::::::::::Media End::::::::::::::::::::::::::::::`);
     }
