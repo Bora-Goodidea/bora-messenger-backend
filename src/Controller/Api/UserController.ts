@@ -61,7 +61,7 @@ export const ProfileEdit = async (req: Request, res: Response): Promise<Response
 };
 
 // 회원 목록
-export const Members = async (req: Request, res: Response): Promise<Response> => {
+export const UserList = async (req: Request, res: Response): Promise<Response> => {
     const userId = req.app.locals.user.user_id;
     const task = await userListExceptMe({ user_id: userId });
     return SuccessResponse(

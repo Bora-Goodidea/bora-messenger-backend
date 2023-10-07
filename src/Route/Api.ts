@@ -14,14 +14,14 @@ import {
     TokenRefresh,
 } from '@Controllers/Api/AuthController';
 import { RestAuthenticateMiddleware } from '@Middlewares/RestAuthenticateMiddleware';
-import { MyProfile, ProfileEdit, Members } from '@Controllers/Api/MemberController';
+import { MyProfile, ProfileEdit, UserList } from '@Controllers/Api/UserController';
 import { ImageCreate } from '@Controllers/Api/MediaController';
 import { MessengerChatList, MessengerCreate, MessengerRoomList, MessengerChatChecked } from '@Controllers/Api/MessengerController';
 
 export const TestsRouter = Router();
 export const SystemRouter = Router();
 export const AuthRouter = Router();
-export const MemberRouter = Router();
+export const UserRouter = Router();
 export const MediaRouter = Router();
 export const MessengerRouter = Router();
 
@@ -47,10 +47,10 @@ AuthRouter.post('/:resetCode/password-change', PasswordChange);
 AuthRouter.get('/token-info', RestAuthenticateMiddleware, TokenInfo);
 AuthRouter.post('/token-refresh', TokenRefresh);
 
-/* Member Router */
-MemberRouter.get('/my-profile', RestAuthenticateMiddleware, MyProfile);
-MemberRouter.post('/profile-update', RestAuthenticateMiddleware, ProfileEdit);
-MemberRouter.get('/member-list', RestAuthenticateMiddleware, Members);
+/* User Router */
+UserRouter.get('/my-profile', RestAuthenticateMiddleware, MyProfile);
+UserRouter.post('/profile-update', RestAuthenticateMiddleware, ProfileEdit);
+UserRouter.get('/user-list', RestAuthenticateMiddleware, UserList);
 
 /* Media Router */
 MediaRouter.post('/image-create', RestAuthenticateMiddleware, ImageCreate);

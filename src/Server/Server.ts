@@ -2,7 +2,7 @@ import express, { Application } from 'express';
 import path from 'path';
 import _ from 'lodash';
 import fs from 'fs';
-import { TestsRouter, SystemRouter, AuthRouter, MemberRouter, MediaRouter, MessengerRouter } from '@Routes/Api';
+import { TestsRouter, SystemRouter, AuthRouter, MediaRouter, MessengerRouter, UserRouter } from '@Routes/Api';
 import { RestDefaultMiddleware } from '@Middlewares/RestDefaultMiddleware';
 import { DefaultRouter as DefaultWebRouter, AuthRouter as AuthWebRouter } from '@Routes/Web';
 import { Logger, AccessLogStream, LogDateTime } from '@Logger';
@@ -52,7 +52,7 @@ const addRouters = (app: Application): void => {
     app.use(`${baseApiRoute}/tests`, TestsRouter);
     app.use(`${baseApiRoute}/system`, RestDefaultMiddleware, SystemRouter);
     app.use(`${baseApiRoute}/auth`, RestDefaultMiddleware, AuthRouter);
-    app.use(`${baseApiRoute}/member`, RestDefaultMiddleware, MemberRouter);
+    app.use(`${baseApiRoute}/user`, RestDefaultMiddleware, UserRouter);
     app.use(`${baseApiRoute}/media`, RestDefaultMiddleware, MediaRouter);
     app.use(`${baseApiRoute}/messenger`, RestDefaultMiddleware, MessengerRouter);
 
