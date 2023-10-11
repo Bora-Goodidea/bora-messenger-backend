@@ -126,6 +126,17 @@ export const MessengerChatList = async (req: Request, res: Response): Promise<Re
             target: lodash.map(messenger.targets, (target) => {
                 return target.user ? generateUserInfo({ depth: `simply`, user: target.user }) : null;
             }),
+            last: (() => {
+                const lastChat = lodash.last(chats);
+                return {
+                    last: !!lastChat,
+                    message: lastChat ? lastChat.item.message : null,
+                    profileImage: lastChat && lastChat.item.user ? lastChat.item.user.profile.image : null,
+                    nickname: lastChat && lastChat.item.user ? lastChat.item.user.nickname : null,
+                    time: lastChat && lastChat.item.user ? lastChat.item.created_at : null,
+                };
+            })(),
+            created_at: changeMysqlDate(`simply`, messenger.created_at),
         },
         chat: lodash.map(lodash.union(lodash.map(chats, (e) => e.item.created_at.format.step1)), (date) => {
             return {
