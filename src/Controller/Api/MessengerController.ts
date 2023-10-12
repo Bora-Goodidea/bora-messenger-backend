@@ -10,11 +10,16 @@ import {
     messengerChartList,
     messengerChartInfoByChatCode,
     messengerChartChecked,
+    messengerRoomInfoByUseridRoomCode,
+    messengerChartCheckedExists,
+    messengerChartTargets,
+    messengerChartCreate,
 } from '@Service/MessengerService';
 import Messages from '@Messages';
-import { generateUUID, generateShaHashString, changeMysqlDate, generateUserInfo } from '@Helper';
+import { generateUUID, generateShaHashString, changeMysqlDate, generateUserInfo, generateHexRandString } from '@Helper';
 import lodash from 'lodash';
 import { ChatItemResponseInterface } from '@Types/CommonTypes';
+import Codes from '@Codes';
 
 // 메신저 방 생성
 export const MessengerCreate = async (req: Request, res: Response): Promise<Response> => {
@@ -88,7 +93,7 @@ export const MessengerChatList = async (req: Request, res: Response): Promise<Re
     const userId = req.app.locals.user.user_id;
     const { roomCode } = req.params;
 
-    const messenger = await messengerRoomInfoByRoomCode({ userId: userId, roomCode: roomCode });
+    const messenger = await messengerRoomInfoByUseridRoomCode({ userId: userId, roomCode: roomCode });
 
     if (!messenger) {
         return ClientErrorResponse(res, Messages.common.exitsMessenger);
@@ -100,7 +105,8 @@ export const MessengerChatList = async (req: Request, res: Response): Promise<Re
      * 2. 날짜별로 조합한 데이트를 순서대로 다시 조합 이때 같은 사용자끼리 배열로 리스트 생성
      */
     const chats = lodash.map(await messengerChartList({ roomId: messenger.id }), (chat) => {
-        const checked_at = chat.checked === 'Y' ? changeMysqlDate(`simply`, chat.checked_at) : null;
+        const findChecked = lodash.find(chat.checked, { user_id: userId });
+
         const created_at = changeMysqlDate(`simply`, chat.created_at);
         return {
             date: `${created_at.format.step1}`,
@@ -113,8 +119,8 @@ export const MessengerChatList = async (req: Request, res: Response): Promise<Re
                 },
                 message: chat.message,
                 user: chat.user ? generateUserInfo({ depth: `simply`, user: chat.user }) : null,
-                checked: chat.checked,
-                checked_at: checked_at,
+                checked: findChecked ? 'Y' : 'N',
+                checked_at: findChecked ? changeMysqlDate(`simply`, findChecked.created_at) : null,
                 created_at: created_at,
             },
         };
@@ -223,10 +229,86 @@ export const MessengerChatChecked = async (req: Request, res: Response): Promise
     }
 
     for await (const chatId of chatIdList) {
-        await messengerChartChecked({ chatId: chatId });
+        const ch = await messengerChartCheckedExists({ userId: userId, chatId: chatId });
+        if (!ch) {
+            await messengerChartChecked({ userId: userId, chatId: chatId });
+        }
     }
 
     return SuccessResponse(res, {
         chart_code: chartCodes,
+    });
+};
+
+// 신규 메시지
+export const MessengerChatCreate = async (req: Request, res: Response): Promise<Response> => {
+    const userId = req.app.locals.user.user_id;
+    const { roomCode } = req.params;
+    const { messageType, message } = req.body;
+    const chatCode = generateHexRandString();
+
+    // 메시지 타입 체크
+    // FIXME: 고도화 필요.
+    const findCode = lodash.find(Codes, { id: `040` });
+    if (findCode) {
+        if (
+            !lodash.includes(
+                lodash.map(findCode.list, (e) => `040${e.id}`),
+                messageType,
+            )
+        ) {
+            return ClientErrorResponse(res, Messages.error.defaultClientError);
+        }
+    } else {
+        return ClientErrorResponse(res, Messages.error.serverError);
+    }
+
+    const messenger = await messengerRoomInfoByRoomCode({ roomCode: roomCode });
+
+    if (!messenger) {
+        return ClientErrorResponse(res, Messages.common.exitsMessenger);
+    }
+
+    // target 을 조회 해서 방에 상대가 복수이면 마지막사용자를 target으로( 임시: 복수일때 특정 대상에게 답장 할수 있게?? 고도화떄..... ) 해서 저장
+    const targets = await messengerChartTargets({ roomId: messenger.id });
+
+    if (targets.length > 1) {
+        const lastTarget = lodash.last(targets);
+
+        // 임시 대상이 있으면 등록 없으면 자신을 대상으로 등록
+        if (lastTarget) {
+            await messengerChartCreate({
+                chatId: messenger.id,
+                chatCode: chatCode,
+                userId: userId,
+                targetId: lastTarget.user_id,
+                messageType: messageType,
+                message: message,
+            });
+        } else {
+            await messengerChartCreate({
+                chatId: messenger.id,
+                chatCode: chatCode,
+                userId: userId,
+                targetId: userId,
+                messageType: messageType,
+                message: message,
+            });
+        }
+    } else {
+        await messengerChartCreate({
+            chatId: messenger.id,
+            chatCode: chatCode,
+            userId: userId,
+            targetId: userId,
+            messageType: messageType,
+            message: message,
+        });
+    }
+
+    return SuccessResponse(res, {
+        userId: userId,
+        roomcode: roomCode,
+        message: message,
     });
 };
