@@ -1,7 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, OneToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, OneToOne, JoinColumn, OneToMany } from 'typeorm';
 import { Users } from '@Entity/Users';
 import { MessengerMaster } from '@Entity/MessengerMaster';
 import { Codes } from '@Entity/Codes';
+import { MessengerChatChecked } from '@Entity/MessengerChatChecked';
 
 export enum StatusTypeEnum {
     TRUE = 'Y',
@@ -31,12 +32,6 @@ export class MessengerChat extends BaseEntity {
     @Column({ type: `text`, nullable: false })
     message: string;
 
-    @Column({ type: `enum`, nullable: false, enum: StatusTypeEnum })
-    checked: string;
-
-    @Column({ type: `timestamp`, nullable: false })
-    checked_at: string;
-
     @Column({ type: `timestamp`, nullable: false })
     created_at: string;
 
@@ -55,4 +50,7 @@ export class MessengerChat extends BaseEntity {
     @OneToOne(() => Codes, (Code) => Code.code_id, { cascade: true })
     @JoinColumn({ name: `message_type`, referencedColumnName: `code_id` })
     messageType?: Codes;
+
+    @OneToMany(() => MessengerChatChecked, (mt) => mt.chat)
+    checked?: MessengerChatChecked[];
 }

@@ -16,7 +16,13 @@ import {
 import { RestAuthenticateMiddleware } from '@Middlewares/RestAuthenticateMiddleware';
 import { MyProfile, ProfileEdit, UserList } from '@Controllers/Api/UserController';
 import { ImageCreate } from '@Controllers/Api/MediaController';
-import { MessengerChatList, MessengerCreate, MessengerRoomList, MessengerChatChecked } from '@Controllers/Api/MessengerController';
+import {
+    MessengerChatList,
+    MessengerCreate,
+    MessengerRoomList,
+    MessengerChatChecked,
+    MessengerChatCreate,
+} from '@Controllers/Api/MessengerController';
 
 export const TestsRouter = Router();
 export const SystemRouter = Router();
@@ -60,3 +66,4 @@ MessengerRouter.post('/messenger-create', RestAuthenticateMiddleware, MessengerC
 MessengerRouter.get('/messenger-room-list', RestAuthenticateMiddleware, MessengerRoomList);
 MessengerRouter.get('/:roomCode/chart-list', RestAuthenticateMiddleware, MessengerChatList);
 MessengerRouter.post('/chart-checked', RestAuthenticateMiddleware, MessengerChatChecked);
+MessengerRouter.post('/:roomCode/messenger-chat-create', RestAuthenticateMiddleware, MessengerChatCreate);
