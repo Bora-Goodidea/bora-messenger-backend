@@ -213,3 +213,15 @@ export const uidExists = async ({ uid }: { uid: string }): Promise<number> => {
 
     return task.length;
 };
+
+/**
+ * 상대방 프로필 정보
+ * @param uid
+ */
+export const getUserProfileByProfileUid = async ({ uid }: { uid: string }): Promise<Users | null> => {
+    return await userRepository.findOne({
+        select: [`id`, `email`, 'nickname'],
+        where: { uid: uid },
+        relations: ['profile', 'profile.media'],
+    });
+};

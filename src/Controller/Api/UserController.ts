@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { ClientErrorResponse, SuccessDefault, SuccessResponse } from '@Commons/ResponseProvider';
-import { getUserProfile, profileNickNameExits, updateProfile, updateProfileImage, userListExceptMe } from '@Service/UserService';
+import { getUserProfile, getUserProfileByProfileUid, profileNickNameExits, updateProfile, updateProfileImage, userListExceptMe } from '@Service/UserService';
 import Config from '@Commons/Config';
 import lodash from 'lodash';
 import Messages from '@Commons/Messages';
@@ -88,4 +88,24 @@ export const UserList = async (req: Request, res: Response): Promise<Response> =
             };
         }),
     );
+};
+
+// 니 프로필
+export const YourProfile = async (req: Request, res: Response): Promise<Response> => {
+    const { profileUid }= req.params
+
+    const infoTask = await getUserProfileByProfileUid({ uid: profileUid });
+
+    if (infoTask && infoTask.profile && infoTask.profile.media) {
+        return SuccessResponse(res, {
+            email: infoTask.email,
+            nickname: infoTask.nickname,
+            profile_image: {
+                id: infoTask.profile.profile_image_id,
+                url: `${Config.MEDIA_HOSTNAME}${infoTask.profile.media.path}/${infoTask.profile.media?.filename}`,
+            },
+        });
+    } else {
+        return ClientErrorResponse(res);
+    }
 };
