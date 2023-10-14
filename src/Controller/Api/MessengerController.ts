@@ -101,13 +101,16 @@ export const MessengerUserRoomList = async (req: Request, res: Response): Promis
             }),
             (room) => {
                 if (room) {
-                    const lastChat = lodash.last(room.chat);
+                    const lastChat = lodash.last(lodash.sortBy(room.chat, 'id'));
 
                     return {
                         room_code: room.room_code,
-                        target: lodash.map(room.targets, (target) => {
-                            return target.user ? generateUserInfo({ depth: `simply`, user: target.user }) : null;
-                        }),
+                        target: lodash.map(
+                            lodash.filter(room.targets, (e) => e.user_id !== userId),
+                            (target) => {
+                                return target.user ? generateUserInfo({ depth: `simply`, user: target.user }) : null;
+                            },
+                        ),
                         chart: {
                             content: lastChat ? lastChat.message : '',
                             updated_at: lastChat ? changeMysqlDate(`simply`, lastChat.created_at) : null,
@@ -185,6 +188,9 @@ export const MessengerChatList = async (req: Request, res: Response): Promise<Re
                 date: date,
                 list: (() => {
                     const returnData: ChatItemResponseInterface = {};
+                    let nowUser = '';
+                    let nowKey = '';
+
                     const list = lodash.forEach(
                         lodash.map(
                             lodash.filter(chats, (e) => e.date === `${date}`),
@@ -192,10 +198,17 @@ export const MessengerChatList = async (req: Request, res: Response): Promise<Re
                                 return e.item;
                             },
                         ),
-                        (e) => {
+                        (e, index) => {
                             if (e.user) {
-                                if (!returnData[e.user.uid]) {
-                                    returnData[e.user.uid] = {
+                                const uid = e.user.uid;
+                                if (nowUser !== uid) {
+                                    nowUser = uid;
+
+                                    nowKey = `${uid}${index}`;
+                                }
+
+                                if (!returnData[nowKey]) {
+                                    returnData[nowKey] = {
                                         location: e.location,
                                         user: {
                                             uid: e.user.uid,
@@ -206,7 +219,7 @@ export const MessengerChatList = async (req: Request, res: Response): Promise<Re
                                     };
                                 }
 
-                                returnData[e.user.uid].message.push({
+                                returnData[nowKey].message.push({
                                     type: e.message_type,
                                     chat_code: e.chat_code,
                                     contents: e.message,
