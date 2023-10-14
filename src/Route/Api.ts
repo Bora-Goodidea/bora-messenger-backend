@@ -22,6 +22,7 @@ import {
     MessengerRoomList,
     MessengerChatChecked,
     MessengerChatCreate,
+    MessengerUserRoomList,
 } from '@Controllers/Api/MessengerController';
 
 export const TestsRouter = Router();
@@ -67,3 +68,4 @@ MessengerRouter.get('/messenger-room-list', RestAuthenticateMiddleware, Messenge
 MessengerRouter.get('/:roomCode/chart-list', RestAuthenticateMiddleware, MessengerChatList);
 MessengerRouter.post('/chart-checked', RestAuthenticateMiddleware, MessengerChatChecked);
 MessengerRouter.post('/:roomCode/messenger-chat-create', RestAuthenticateMiddleware, MessengerChatCreate);
+MessengerRouter.get('/messenger-user-room-list', RestAuthenticateMiddleware, MessengerUserRoomList);
