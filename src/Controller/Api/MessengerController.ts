@@ -101,7 +101,7 @@ export const MessengerUserRoomList = async (req: Request, res: Response): Promis
             }),
             (room) => {
                 if (room) {
-                    const lastChat = lodash.last(room.chat);
+                    const lastChat = lodash.last(lodash.sortBy(room.chat, 'id'));
 
                     return {
                         room_code: room.room_code,
