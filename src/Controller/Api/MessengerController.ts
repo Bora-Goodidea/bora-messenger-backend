@@ -137,6 +137,7 @@ export const MessengerChatList = async (req: Request, res: Response): Promise<Re
                 return {
                     last: !!lastChat,
                     message: lastChat ? lastChat.item.message : null,
+                    uid: lastChat && lastChat.item.user ? lastChat.item.user.uid : null,
                     profileImage: lastChat && lastChat.item.user ? lastChat.item.user.profile.image : null,
                     nickname: lastChat && lastChat.item.user ? lastChat.item.user.nickname : null,
                     time: lastChat && lastChat.item.user ? lastChat.item.created_at : null,
