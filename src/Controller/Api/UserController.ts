@@ -89,23 +89,3 @@ export const UserList = async (req: Request, res: Response): Promise<Response> =
         }),
     );
 };
-
-// 니 프로필
-export const YourProfile = async (req: Request, res: Response): Promise<void> => {
-    // const {uid }= req.query
-    console.log(req.query)
-
-    // const infoTask = await getUserProfile({ user_id: userId });
-    // if (infoTask && infoTask.profile && infoTask.profile.media) {
-    //     return SuccessResponse(res, {
-    //         email: infoTask.email,
-    //         nickname: infoTask.nickname,
-    //         profile_image: {
-    //             id: infoTask.profile.profile_image_id,
-    //             url: `${Config.MEDIA_HOSTNAME}${infoTask.profile.media.path}/${infoTask.profile.media?.filename}`,
-    //         },
-    //     });
-    // } else {
-         ClientErrorResponse(res);
-    // }
-};
