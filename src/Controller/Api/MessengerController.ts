@@ -10,10 +10,10 @@ import {
     messengerChartList,
     messengerChartInfoByChatCode,
     messengerChartChecked,
-    messengerRoomInfoByUseridRoomCode,
     messengerChartCheckedExists,
     messengerChartTargets,
     messengerChartCreate,
+    messengerBaseTargetRoomList,
 } from '@Service/MessengerService';
 import Messages from '@Messages';
 import { generateUUID, generateShaHashString, changeMysqlDate, generateUserInfo, generateHexRandString } from '@Helper';
@@ -66,7 +66,6 @@ export const MessengerRoomList = async (req: Request, res: Response): Promise<Re
     const userId = req.app.locals.user.user_id;
 
     const roomListTask = await messengerRoomList({ userId: userId });
-
     return SuccessResponse(
         res,
         lodash.map(roomListTask, (room) => {
@@ -88,12 +87,48 @@ export const MessengerRoomList = async (req: Request, res: Response): Promise<Re
     );
 };
 
-// 채팅 리스트
+// 채팅방 리스트 (사용자 기준)
+export const MessengerUserRoomList = async (req: Request, res: Response): Promise<Response> => {
+    const userId = req.app.locals.user.user_id;
+
+    const roomListTask = await messengerBaseTargetRoomList({ userId: userId });
+
+    return SuccessResponse(
+        res,
+        lodash.map(
+            lodash.map(roomListTask, (list) => {
+                return list.room;
+            }),
+            (room) => {
+                if (room) {
+                    const lastChat = lodash.last(room.chat);
+
+                    return {
+                        room_code: room.room_code,
+                        target: lodash.map(room.targets, (target) => {
+                            return target.user ? generateUserInfo({ depth: `simply`, user: target.user }) : null;
+                        }),
+                        chart: {
+                            content: lastChat ? lastChat.message : '',
+                            updated_at: lastChat ? changeMysqlDate(`simply`, lastChat.created_at) : null,
+                        },
+                        created_at: changeMysqlDate(`simply`, room.created_at),
+                        updated_at: changeMysqlDate(`simply`, room.updated_at),
+                    };
+                } else {
+                    return null;
+                }
+            },
+        ),
+    );
+};
+
+// 채팅 리스트(사용자 기준)
 export const MessengerChatList = async (req: Request, res: Response): Promise<Response> => {
     const userId = req.app.locals.user.user_id;
     const { roomCode } = req.params;
 
-    const messenger = await messengerRoomInfoByUseridRoomCode({ userId: userId, roomCode: roomCode });
+    const messenger = await messengerRoomInfoByRoomCode({ roomCode: roomCode });
 
     if (!messenger) {
         return ClientErrorResponse(res, Messages.common.exitsMessenger);

@@ -60,7 +60,7 @@ export const messengerExistsByGubunCode = async ({ gubunCode }: { gubunCode: str
 };
 
 /**
- * 채팅방 전체 리스트
+ * 채팅방 전체 리스트(
  * @param userId
  */
 export const messengerRoomList = async ({ userId }: { userId: number }): Promise<Array<MessengerMaster>> => {
@@ -73,7 +73,20 @@ export const messengerRoomList = async ({ userId }: { userId: number }): Promise
 };
 
 /**
- * 메신저 정보 조회
+ * 채팅방 리스트 내가 속한 방 리스트
+ * @param userId
+ */
+export const messengerBaseTargetRoomList = async ({ userId }: { userId: number }): Promise<Array<MessengerTarget>> => {
+    return await messengerTargetRepository.find({
+        select: ['id', 'room_id', 'user_id'],
+        where: { user_id: userId },
+        relations: ['room.targets.user.profile.media', 'room.chat'],
+        // order: { updated_at: 'DESC' },
+    });
+};
+
+/**
+ * 메신저 정보 조회 ( 사용자 아이디, 방 코드)
  * @param userId
  * @param roomCode
  */
