@@ -14,7 +14,7 @@ import {
     TokenRefresh,
 } from '@Controllers/Api/AuthController';
 import { RestAuthenticateMiddleware } from '@Middlewares/RestAuthenticateMiddleware';
-import { MyProfile, ProfileEdit, UserList } from '@Controllers/Api/UserController';
+import { MyProfile, ProfileEdit, UserList, YourProfile } from '@Controllers/Api/UserController';
 import { ImageCreate } from '@Controllers/Api/MediaController';
 import {
     MessengerChatList,
@@ -57,6 +57,7 @@ AuthRouter.post('/token-refresh', TokenRefresh);
 UserRouter.get('/my-profile', RestAuthenticateMiddleware, MyProfile);
 UserRouter.post('/profile-update', RestAuthenticateMiddleware, ProfileEdit);
 UserRouter.get('/user-list', RestAuthenticateMiddleware, UserList);
+UserRouter.get('/:profileUid/profile', RestAuthenticateMiddleware, YourProfile);
 
 /* Media Router */
 MediaRouter.post('/image-create', RestAuthenticateMiddleware, ImageCreate);
