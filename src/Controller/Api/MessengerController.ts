@@ -105,9 +105,12 @@ export const MessengerUserRoomList = async (req: Request, res: Response): Promis
 
                     return {
                         room_code: room.room_code,
-                        target: lodash.map(room.targets, (target) => {
-                            return target.user ? generateUserInfo({ depth: `simply`, user: target.user }) : null;
-                        }),
+                        target: lodash.map(
+                            lodash.filter(room.targets, (e) => e.user_id !== userId),
+                            (target) => {
+                                return target.user ? generateUserInfo({ depth: `simply`, user: target.user }) : null;
+                            },
+                        ),
                         chart: {
                             content: lastChat ? lastChat.message : '',
                             updated_at: lastChat ? changeMysqlDate(`simply`, lastChat.created_at) : null,
