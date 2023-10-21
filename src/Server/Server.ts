@@ -12,6 +12,8 @@ import cors from 'cors';
 import fileupload from 'express-fileupload';
 import morgan from 'morgan';
 import AppDataSource from '@Database/AppDataSource';
+import SocketsModule from '@Commons/SocketsModule';
+import { createServer } from 'http';
 
 export const checkEnvironment = (): { state: boolean; message: string } => {
     const envFileExist = fs.existsSync('.env');
@@ -87,6 +89,7 @@ export const initServer = (app: Application, Path: string): void => {
     app.locals.user = {
         auth: false,
         user_id: 0,
+        uid: '',
         email: '',
         status: '',
         level: '',
@@ -121,9 +124,13 @@ export const startServer = async (app: Application) => {
         Logger.warn(`:: Database Init Success ::`);
     }
 
-    app.listen(port, () => {
+    const server = createServer(app);
+
+    app.set('io', SocketsModule.initSocketServer(server));
+
+    server.listen(port, () => {
         Logger.console(``);
-        Logger.console(`Running Name  - ${appName}`);
+        Logger.console(`Running Name - ${appName}`);
         Logger.console(`Running Environment - ${appEnv}`);
         Logger.console(`Running on port - ${port}`);
         Logger.console(``);

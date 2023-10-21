@@ -11,7 +11,7 @@ app.locals.env = process.env;
 
 if (checkResult.state) {
     Server.initServer(app, __dirname);
-    Server.startServer(app);
+    Server.startServer(app).then();
 } else {
     console.clear();
     Logger.error(`\n\nStart Server Error: ${checkResult.message}\n`);

@@ -4,11 +4,6 @@ import { MessengerMaster } from '@Entity/MessengerMaster';
 import { Codes } from '@Entity/Codes';
 import { MessengerChatChecked } from '@Entity/MessengerChatChecked';
 
-export enum StatusTypeEnum {
-    TRUE = 'Y',
-    FALSE = 'N',
-}
-
 @Entity()
 export class MessengerChat extends BaseEntity {
     @PrimaryGeneratedColumn('increment')

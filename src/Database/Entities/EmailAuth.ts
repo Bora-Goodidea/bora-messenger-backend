@@ -1,10 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, OneToOne, JoinColumn } from 'typeorm';
 import { Users } from '@Entity/Users';
-
-export enum StatusTypeEnum {
-    TRUE = 'Y',
-    FALSE = 'N',
-}
+import { StatusTypeEnum } from '@Types/CommonTypes';
 
 @Entity()
 export class EmailAuth extends BaseEntity {

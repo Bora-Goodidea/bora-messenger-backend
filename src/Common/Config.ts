@@ -31,4 +31,5 @@ export default {
     SFTP_FILE_DEST_PATH_ROOT: process.env.SFTP_FILE_DEST_PATH_ROOT,
     SFTP_FILE_DEST_PATH: process.env.SFTP_FILE_DEST_PATH,
     MEDIA_HOSTNAME: process.env.MEDIA_HOSTNAME,
+    SIMPLY_CONSOLE_LOG: process.env.SIMPLY_CONSOLE_LOG,
 };

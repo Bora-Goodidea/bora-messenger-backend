@@ -18,6 +18,7 @@ import { MyProfile, ProfileEdit, UserList, YourProfile } from '@Controllers/Api/
 import { ImageCreate } from '@Controllers/Api/MediaController';
 import {
     MessengerChatList,
+    MessengerChatListElaborate,
     MessengerCreate,
     MessengerRoomList,
     MessengerChatChecked,
@@ -67,6 +68,7 @@ MediaRouter.post('/image-create', RestAuthenticateMiddleware, ImageCreate);
 MessengerRouter.post('/messenger-create', RestAuthenticateMiddleware, MessengerCreate);
 MessengerRouter.get('/messenger-room-list', RestAuthenticateMiddleware, MessengerRoomList);
 MessengerRouter.get('/:roomCode/chart-list', RestAuthenticateMiddleware, MessengerChatList);
+MessengerRouter.get('/:roomCode/chart-list-elaborate', RestAuthenticateMiddleware, MessengerChatListElaborate);
 MessengerRouter.post('/chart-checked', RestAuthenticateMiddleware, MessengerChatChecked);
 MessengerRouter.post('/:roomCode/messenger-chat-create', RestAuthenticateMiddleware, MessengerChatCreate);
 MessengerRouter.get('/messenger-user-room-list', RestAuthenticateMiddleware, MessengerUserRoomList);

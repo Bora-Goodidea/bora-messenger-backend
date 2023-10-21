@@ -85,7 +85,7 @@ export const userCreate = async ({
  */
 export const getUserForLogin = async ({ email }: { email: string }): Promise<Users | null> => {
     return await userRepository.findOne({
-        select: [`id`, `email`, 'password', `status`, 'nickname'],
+        select: [`id`, `email`, 'password', `status`, 'nickname', 'uid'],
         where: { email: email },
         relations: ['emailauth'],
     });
@@ -184,11 +184,23 @@ export const userAllList = async (): Promise<Users[] | null> => {
 
 /**
  * 사용자 전체 리스트 ( 본인제외 )
+ * @param user_id
  */
 export const userListExceptMe = async ({ user_id }: { user_id: number }): Promise<Users[] | null> => {
     return await userRepository.find({
         select: [`id`, `uid`, `type`, `level`, `status`, `email`, `nickname`, `email_verified_at`, `updated_at`, `created_at`],
         where: { id: Not(user_id) },
+        relations: ['typeCode', 'levelCode', 'statusCode', 'profile', 'profile.media', 'active'],
+    });
+};
+/**
+ * 사용자 상세
+ * @param user_id
+ */
+export const userDetailInfo = async ({ user_id }: { user_id: number }): Promise<Users | null> => {
+    return await userRepository.findOne({
+        select: [`id`, `uid`, `type`, `level`, `status`, `email`, `nickname`, `email_verified_at`, `updated_at`, `created_at`],
+        where: { id: user_id },
         relations: ['typeCode', 'levelCode', 'statusCode', 'profile', 'profile.media', 'active'],
     });
 };
