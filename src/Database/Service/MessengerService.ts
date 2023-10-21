@@ -3,11 +3,15 @@ import { MessengerMaster } from '@Entity/MessengerMaster';
 import { MessengerTarget } from '@Entity/MessengerTarget';
 import { MessengerChat } from '@Entity/MessengerChat';
 import { MessengerChatChecked } from '@Entity/MessengerChatChecked';
+import { UserActive } from '@Entity/UserActive';
+import { toMySqlDatetime } from '@Helper';
+import { UpdateResult } from 'typeorm';
 
 const messengerMasterRepository = AppDataSource.getRepository(MessengerMaster);
 const messengerTargetRepository = AppDataSource.getRepository(MessengerTarget);
-const MessengerChatRepository = AppDataSource.getRepository(MessengerChat);
+const messengerChatRepository = AppDataSource.getRepository(MessengerChat);
 const MessengerChatCheckedRepository = AppDataSource.getRepository(MessengerChatChecked);
+const userActiveRepository = AppDataSource.getRepository(UserActive);
 
 /**
  * 메신저 룸 생성
@@ -73,6 +77,19 @@ export const messengerRoomList = async ({ userId }: { userId: number }): Promise
 };
 
 /**
+ * 방정보 조회
+ * @param roomCode
+ */
+export const messengerRoomInfo = async ({ roomCode }: { roomCode: string }): Promise<MessengerMaster | null> => {
+    return await messengerMasterRepository.findOne({
+        select: ['id', 'user_id', 'room_code', 'updated_at', 'created_at'],
+        where: { room_code: roomCode },
+        relations: ['targets.user.profile.media', 'targets.user.active', 'chat'],
+        order: { updated_at: 'DESC' },
+    });
+};
+
+/**
  * 채팅방 리스트 내가 속한 방 리스트
  * @param userId
  */
@@ -81,7 +98,6 @@ export const messengerBaseTargetRoomList = async ({ userId }: { userId: number }
         select: ['id', 'room_id', 'user_id'],
         where: { user_id: userId },
         relations: ['room.targets.user.profile.media', 'room.chat'],
-        // order: { updated_at: 'DESC' },
     });
 };
 
@@ -112,6 +128,19 @@ export const messengerRoomInfoByRoomCode = async ({ roomCode }: { roomCode: stri
     return await messengerMasterRepository.findOne({
         select: ['id', 'user_id', 'room_code', 'updated_at', 'created_at'],
         where: { room_code: roomCode },
+        relations: ['targets.user.profile.media'],
+    });
+};
+
+/**
+ * 채팅방 정보 조회
+ * @param roomCode
+ */
+export const messengerRoomTargetActiveInfoByRoomCode = async ({ roomCode }: { roomCode: string }): Promise<MessengerMaster | null> => {
+    return await messengerMasterRepository.findOne({
+        select: ['id', 'user_id', 'room_code', 'updated_at', 'created_at'],
+        where: { room_code: roomCode },
+        relations: ['targets.user.active'],
     });
 };
 
@@ -120,9 +149,23 @@ export const messengerRoomInfoByRoomCode = async ({ roomCode }: { roomCode: stri
  * @param userId
  */
 export const messengerChartList = async ({ roomId }: { roomId: number }): Promise<Array<MessengerChat>> => {
-    return await MessengerChatRepository.find({
+    return await messengerChatRepository.find({
         select: ['id', 'user_id', 'target_id', 'chat_code', 'message_type', 'message', 'created_at'],
         where: { room_id: roomId },
+        relations: ['user.profile.media', 'messageType', 'checked'],
+        order: { created_at: 'ASC' },
+    });
+};
+
+/**
+ * 메신저 채팅 단건 조회
+ * @param roomId
+ * @param chatId
+ */
+export const messengerChartOne = async ({ roomId, chatId }: { roomId: number; chatId: number }): Promise<MessengerChat | null> => {
+    return await messengerChatRepository.findOne({
+        select: ['id', 'user_id', 'target_id', 'chat_code', 'message_type', 'message', 'created_at'],
+        where: { room_id: roomId, id: chatId },
         relations: ['user.profile.media', 'messageType', 'checked'],
         order: { created_at: 'ASC' },
     });
@@ -134,7 +177,7 @@ export const messengerChartList = async ({ roomId }: { roomId: number }): Promis
  * @param chat_code
  */
 export const messengerChartInfoByChatCode = async ({ userId, chat_code }: { userId: number; chat_code: string }): Promise<MessengerChat | null> => {
-    return await MessengerChatRepository.findOne({
+    return await messengerChatRepository.findOne({
         select: ['id', 'user_id', 'target_id', 'chat_code', 'message_type', 'message', 'created_at'],
         where: { chat_code: chat_code, user_id: userId },
     });
@@ -173,6 +216,7 @@ export const messengerChartChecked = async ({ userId, chatId }: { userId: number
 export const messengerChartTargets = async ({ roomId }: { roomId: number }): Promise<MessengerTarget[]> => {
     return await messengerTargetRepository.find({
         where: { room_id: roomId },
+        relations: ['user.active'],
     });
 };
 
@@ -200,7 +244,7 @@ export const messengerChartCreate = async ({
     messageType: string;
     message: string;
 }): Promise<MessengerChat> => {
-    return await MessengerChatRepository.save(
+    return await messengerChatRepository.save(
         {
             room_id: chatId,
             chat_code: chatCode,
@@ -211,4 +255,47 @@ export const messengerChartCreate = async ({
         },
         {},
     );
+};
+
+/**
+ * 액티브 상태 조회
+ * @param userId
+ */
+export const userActiveInfo = async ({ userId }: { userId: number }): Promise<UserActive | null> => {
+    return await userActiveRepository.findOne({
+        where: { user_id: userId },
+    });
+};
+
+/**
+ * 액티브 상태 정보 등록
+ * @param userId
+ * @param sid
+ */
+export const userActiveCreate = async ({ userId, sid }: { userId: number; sid: string }): Promise<UserActive> => {
+    return userActiveRepository.save(
+        {
+            active: 'Y',
+            user_id: userId,
+            sid: sid,
+        },
+        { transaction: false, data: false },
+    );
+};
+
+/**
+ * 액티브 상태 정보 업데이트
+ * @param id
+ * @param sid
+ */
+export const userActiveUpdate = async ({ id, sid }: { id: number; sid: string }): Promise<UpdateResult> => {
+    return userActiveRepository.update({ id: id }, { active: `Y`, sid: sid, updated_at: toMySqlDatetime(new Date()) });
+};
+
+/**
+ * 비활성 으로 업데이트
+ * @param userId
+ */
+export const userinactiveUpdate = async ({ userId }: { userId: number }): Promise<UpdateResult> => {
+    return userActiveRepository.update({ user_id: userId }, { active: `N`, updated_at: toMySqlDatetime(new Date()) });
 };

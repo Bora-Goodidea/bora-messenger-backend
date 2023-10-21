@@ -1,6 +1,15 @@
 import crypto from 'crypto';
 import { Users } from '@Entity/Users';
 import Config from '@Config';
+import { MessengerChat } from '@Entity/MessengerChat';
+import { MessengerMaster } from '@Entity/MessengerMaster';
+import lodash from 'lodash';
+import {
+    CommonUserInfoInterface,
+    CommonChangeMysqlDateInterface,
+    CommonGenerateChatListItemInterdface,
+    CommongenerateRoomListItemInterface,
+} from '@Types/CommonTypes';
 
 /**
  * 이메일 검사
@@ -44,38 +53,7 @@ export const generateRandomLetter = () => {
  * @param depth
  * @param date
  */
-export const changeMysqlDate = (
-    depth: `simply` | `detail`,
-    date: string,
-): {
-    origin?: Date;
-    number?: {
-        year: number;
-        month: number;
-        date: number;
-        day: number;
-        hour: number;
-        minutes: number;
-        seconds: number;
-    };
-    string?: {
-        year: string;
-        month: string;
-        date: string;
-        day: string;
-        hour: string;
-        minutes: string;
-        seconds: string;
-    };
-    format: {
-        step1: string;
-        step2: string;
-        step3?: string;
-        step4?: string;
-        sinceString?: string;
-    };
-    sinceString: string;
-} => {
+export const changeMysqlDate = (depth: `simply` | `detail`, date: string): CommonChangeMysqlDateInterface => {
     const days = ['일', '월', '화', '수', '목', '금', '토'];
 
     const convertDate = new Date(date);
@@ -201,34 +179,11 @@ export const generateShaHashString = (string: string): string => {
     return crypto.createHash(`sha512`).update(string).digest(`base64`);
 };
 
-export const generateUserInfo = ({
-    depth,
-    user,
-}: {
-    depth: `simply` | `detail`;
-    user: Users;
-}): {
-    id?: number;
-    uid: string;
-    email?: string;
-    nickname: string;
-    type?: {
-        code: string;
-        name: string;
-    };
-    level?: {
-        code: string;
-        name: string;
-    };
-    status?: {
-        code: string;
-        name: string;
-    };
-    profile: {
-        image: string;
-    };
-} => {
+export const generateUserInfo = ({ depth, user }: { depth: `simply` | `detail`; user: Users }): CommonUserInfoInterface => {
     if (depth === `detail`) {
+        const createdAt = changeMysqlDate(`simply`, user.created_at);
+        const updatedAt = changeMysqlDate(`simply`, user.updated_at);
+
         return {
             id: user.id,
             uid: user.uid,
@@ -264,6 +219,12 @@ export const generateUserInfo = ({
             profile: {
                 image: user.profile && user.profile.media ? `${Config.MEDIA_HOSTNAME}${user.profile.media.path}/${user.profile.media.filename}` : ``,
             },
+            active: {
+                state: user.active && user.active.active === `Y` ? `Y` : 'N',
+                updated_at: user.active ? changeMysqlDate(`simply`, user.active.updated_at) : null,
+            },
+            created_at: createdAt,
+            updated_at: updatedAt,
         };
     } else {
         return {
@@ -274,4 +235,56 @@ export const generateUserInfo = ({
             },
         };
     }
+};
+
+/**
+ * 채팅 리스트 생성
+ * @param userId
+ * @param list
+ */
+export const generateChatItem = ({ userId, chatData }: { userId: number; chatData: MessengerChat }): CommonGenerateChatListItemInterdface => {
+    const findChecked = lodash.find(chatData.checked, { user_id: userId });
+
+    const created_at = changeMysqlDate(`simply`, chatData.created_at);
+    return {
+        date: `${created_at.format.step1}`,
+        item: {
+            location: chatData.user_id === userId ? `right` : `left`,
+            chat_code: chatData.chat_code,
+            message_type: {
+                code: chatData.messageType ? chatData.messageType.code_id : null,
+                name: chatData.messageType ? chatData.messageType.name : null,
+            },
+            message: chatData.message,
+            user: chatData.user ? generateUserInfo({ depth: `simply`, user: chatData.user }) : null,
+            checked: findChecked ? 'Y' : 'N',
+            checked_at: findChecked ? changeMysqlDate(`simply`, findChecked.created_at) : null,
+            created_at: created_at,
+        },
+    };
+};
+
+/**
+ * 방정보 생성
+ * @param userId
+ * @param room
+ */
+export const generateRoomListItem = ({ userId, room }: { userId: number; room: MessengerMaster }): CommongenerateRoomListItemInterface => {
+    const lastChat = lodash.last(lodash.sortBy(room.chat, 'id'));
+
+    return {
+        room_code: room.room_code,
+        target: lodash.map(
+            lodash.filter(room.targets, (e) => e.user_id !== userId),
+            (target) => {
+                return target.user ? generateUserInfo({ depth: `simply`, user: target.user }) : null;
+            },
+        ),
+        chart: {
+            content: lastChat ? lastChat.message : '',
+            updated_at: lastChat ? changeMysqlDate(`simply`, lastChat.created_at) : null,
+        },
+        created_at: changeMysqlDate(`simply`, room.created_at),
+        updated_at: changeMysqlDate(`simply`, room.updated_at),
+    };
 };

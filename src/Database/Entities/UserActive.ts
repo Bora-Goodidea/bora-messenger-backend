@@ -1,10 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, OneToOne, JoinColumn } from 'typeorm';
 import { Users } from '@Entity/Users';
-
-export enum StatusTypeEnum {
-    TRUE = 'Y',
-    FALSE = 'N',
-}
+import { StatusTypeEnum } from '@Types/CommonTypes';
 
 @Entity()
 export class UserActive extends BaseEntity {
@@ -13,6 +9,9 @@ export class UserActive extends BaseEntity {
 
     @Column({ type: `int`, nullable: false })
     user_id: number;
+
+    @Column({ type: `varchar`, nullable: false, length: 50, unique: true })
+    sid: string;
 
     @Column({ type: `enum`, nullable: false, enum: StatusTypeEnum })
     active: string;

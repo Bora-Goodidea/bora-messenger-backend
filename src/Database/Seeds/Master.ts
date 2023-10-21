@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import lodash from 'lodash';
 import MysqlConnect from '@Database/MysqlConnect';
-import { CodeTypeEnum } from '@Entity/Codes';
+import { CodeTypeEnum } from '@Types/CommonTypes';
 import { exit } from 'node:process';
 import Codes from '@Codes';
 

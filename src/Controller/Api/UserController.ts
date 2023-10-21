@@ -1,12 +1,19 @@
 import { Request, Response } from 'express';
 import { ClientErrorResponse, SuccessDefault, SuccessResponse } from '@Commons/ResponseProvider';
-import { getUserProfile, profileNickNameExits, updateProfile, updateProfileImage, userListExceptMe } from '@Service/UserService';
+import {
+    getUserProfile,
+    getUserProfileByProfileUid,
+    profileNickNameExits,
+    updateProfile,
+    updateProfileImage,
+    userListExceptMe,
+} from '@Service/UserService';
 import Config from '@Commons/Config';
 import lodash from 'lodash';
 import Messages from '@Commons/Messages';
 import { mediaExits } from '@Database/Service/MediaService';
 import { Logger } from '@Commons/Logger';
-import { changeMysqlDate, generateUserInfo } from '@Helper';
+import { generateUserInfo } from '@Helper';
 
 // 내 프로필
 export const MyProfile = async (req: Request, res: Response): Promise<Response> => {
@@ -67,25 +74,29 @@ export const UserList = async (req: Request, res: Response): Promise<Response> =
     return SuccessResponse(
         res,
         lodash.map(task, (user) => {
-            const userInfo = generateUserInfo({ depth: `detail`, user: user });
-
-            const createdAt = changeMysqlDate(`simply`, user.created_at);
-            const updatedAt = changeMysqlDate(`simply`, user.updated_at);
-            return {
-                uid: userInfo.uid,
-                type: userInfo.type,
-                level: userInfo.level,
-                status: userInfo.status,
-                email: userInfo.email,
-                nickname: userInfo.nickname,
-                profile: userInfo.profile,
-                active: {
-                    state: user.active ? user.active.active : 'N',
-                    updated_at: user.active ? changeMysqlDate(`simply`, user.active.updated_at) : null,
-                },
-                created_at: createdAt,
-                updated_at: updatedAt,
-            };
+            const info = generateUserInfo({ depth: `detail`, user: user });
+            delete info.id;
+            return info;
         }),
     );
+};
+
+// 니 프로필
+export const YourProfile = async (req: Request, res: Response): Promise<Response> => {
+    const { profileUid } = req.params;
+
+    const infoTask = await getUserProfileByProfileUid({ uid: profileUid });
+
+    if (infoTask && infoTask.profile && infoTask.profile.media) {
+        return SuccessResponse(res, {
+            email: infoTask.email,
+            nickname: infoTask.nickname,
+            profile_image: {
+                id: infoTask.profile.profile_image_id,
+                url: `${Config.MEDIA_HOSTNAME}${infoTask.profile.media.path}/${infoTask.profile.media?.filename}`,
+            },
+        });
+    } else {
+        return ClientErrorResponse(res);
+    }
 };
