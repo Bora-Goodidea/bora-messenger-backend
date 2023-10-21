@@ -3,6 +3,8 @@ import { MessengerMaster } from '@Entity/MessengerMaster';
 import { MessengerTarget } from '@Entity/MessengerTarget';
 import { MessengerChat } from '@Entity/MessengerChat';
 import { MessengerChatChecked } from '@Entity/MessengerChatChecked';
+import { DeleteResult, UpdateResult } from 'typeorm';
+import { toMySqlDatetime } from '@Commons/Helper';
 
 const messengerMasterRepository = AppDataSource.getRepository(MessengerMaster);
 const messengerTargetRepository = AppDataSource.getRepository(MessengerTarget);
@@ -211,4 +213,50 @@ export const messengerChartCreate = async ({
         },
         {},
     );
+};
+
+/**
+ * 채팅방 나가기 타겟 삭제
+ * @param roomId
+ * @param userId
+ */
+export const messengerTargetDelete = async ({ roomId, userId }: { roomId: number; userId: number }): Promise<DeleteResult> => {
+    return await messengerTargetRepository.delete({
+        room_id: roomId,
+        user_id: userId,
+    });
+};
+
+/**
+ * 채팅방 주인 변경
+ * @param roomCode
+ * @param userId
+ */
+export const messengerMasterChange = async ({ roomCode, userId }: { roomCode: string; userId: number }): Promise<UpdateResult> => {
+    return await messengerMasterRepository.update(
+        {
+            room_code: roomCode,
+        },
+        { user_id: userId, updated_at: toMySqlDatetime(new Date()) },
+    );
+};
+
+/**
+ * 채팅방 주인 삭제
+ * @param roomCode
+ */
+export const messengerMasterDelete = async ({ roomCode }: { roomCode: string }): Promise<DeleteResult> => {
+    return await messengerMasterRepository.delete({
+        room_code: roomCode,
+    });
+};
+
+/**
+ * 채팅 삭제
+ * @param roomId
+ */
+export const messengerChatDelete = async ({ roomId }: { roomId: number }): Promise<DeleteResult> => {
+    return await MessengerChatRepository.delete({
+        room_id: roomId,
+    });
 };

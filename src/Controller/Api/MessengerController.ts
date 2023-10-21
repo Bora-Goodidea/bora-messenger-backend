@@ -14,6 +14,10 @@ import {
     messengerChartTargets,
     messengerChartCreate,
     messengerBaseTargetRoomList,
+    messengerTargetDelete,
+    messengerMasterChange,
+    messengerMasterDelete,
+    messengerChatDelete,
 } from '@Service/MessengerService';
 import Messages from '@Messages';
 import { generateUUID, generateShaHashString, changeMysqlDate, generateUserInfo, generateHexRandString } from '@Helper';
@@ -360,4 +364,42 @@ export const MessengerChatCreate = async (req: Request, res: Response): Promise<
         roomcode: roomCode,
         message: message,
     });
+};
+
+// 메신저 방 나가기
+export const messengerRoomOut = async (req: Request, res: Response): Promise<Response> => {
+    const userId = req.app.locals.user.user_id;
+    const { roomCode } = req.params;
+
+    // 룸 코드로 방 정보 조회
+    const messenger = await messengerRoomInfoByRoomCode({ roomCode: roomCode });
+    // 방 정보로 타겟 조회
+    if (messenger) {
+        const targets = await messengerChartTargets({ roomId: messenger.id });
+        if (targets.length > 1) {
+            // 방 주인이 나갈 경우
+            if (messenger.user_id === userId) {
+                // 타겟 삭제
+                await messengerTargetDelete({ userId: userId, roomId: messenger.id });
+
+                // 방 주인 변경
+                const selectedTargets = targets.filter((target) => target.user_id !== userId)[0]?.user_id;
+                await messengerMasterChange({ roomCode: roomCode, userId: selectedTargets });
+                // 방 주인 외 나갈 경우
+            } else {
+                // 타겟 삭제
+                await messengerTargetDelete({ userId: userId, roomId: messenger.id });
+            }
+            // 마지막 타겟일 경우 채팅 관련 전부 삭제
+        } else {
+            // 타겟 삭제
+            await messengerTargetDelete({ userId: userId, roomId: messenger.id });
+            // 마스터 삭제
+            await messengerMasterDelete({ roomCode: roomCode });
+            // 채팅 삭제
+            await messengerChatDelete({ roomId: messenger.id });
+        }
+    }
+
+    return SuccessResponse(res, { room_id: messenger?.id });
 };
