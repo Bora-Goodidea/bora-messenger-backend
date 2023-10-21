@@ -20,7 +20,15 @@ import {
     messengerChatDelete,
 } from '@Service/MessengerService';
 import Messages from '@Messages';
-import { generateUUID, generateShaHashString, changeMysqlDate, generateUserInfo, generateHexRandString } from '@Helper';
+import {
+    generateUUID,
+    generateShaHashString,
+    changeMysqlDate,
+    generateUserInfo,
+    generateHexRandString,
+    generateChatItem,
+    generateRoomListItem,
+} from '@Helper';
 import lodash from 'lodash';
 import { ChatItemResponseInterface } from '@Types/CommonTypes';
 import Codes from '@Codes';
@@ -105,23 +113,7 @@ export const MessengerUserRoomList = async (req: Request, res: Response): Promis
             }),
             (room) => {
                 if (room) {
-                    const lastChat = lodash.last(lodash.sortBy(room.chat, 'id'));
-
-                    return {
-                        room_code: room.room_code,
-                        target: lodash.map(
-                            lodash.filter(room.targets, (e) => e.user_id !== userId),
-                            (target) => {
-                                return target.user ? generateUserInfo({ depth: `simply`, user: target.user }) : null;
-                            },
-                        ),
-                        chart: {
-                            content: lastChat ? lastChat.message : '',
-                            updated_at: lastChat ? changeMysqlDate(`simply`, lastChat.created_at) : null,
-                        },
-                        created_at: changeMysqlDate(`simply`, room.created_at),
-                        updated_at: changeMysqlDate(`simply`, room.updated_at),
-                    };
+                    return generateRoomListItem({ userId: userId, room: room });
                 } else {
                     return null;
                 }
@@ -132,6 +124,50 @@ export const MessengerUserRoomList = async (req: Request, res: Response): Promis
 
 // 채팅 리스트(사용자 기준)
 export const MessengerChatList = async (req: Request, res: Response): Promise<Response> => {
+    const userId = req.app.locals.user.user_id;
+    const { roomCode } = req.params;
+
+    const messenger = await messengerRoomInfoByRoomCode({ roomCode: roomCode });
+
+    if (!messenger) {
+        return ClientErrorResponse(res, Messages.common.exitsMessenger);
+    }
+
+    /**
+     * 순서
+     * 1. 디비에서 리스트를 뽑아와서 날짜별로 오브젝트 생성
+     * 2. 날짜별로 조합한 데이트를 순서대로 다시 조합 이때 같은 사용자끼리 배열로 리스트 생성
+     */
+    // const chats = generateChatList({ userId: userId, list: await messengerChartList({ roomId: messenger.id }) });
+    const chats = lodash.map(await messengerChartList({ roomId: messenger.id }), (chat) => {
+        return generateChatItem({ userId: userId, chatData: chat });
+    });
+
+    return SuccessResponse(res, {
+        messenger: {
+            room_code: messenger.room_code,
+            target: lodash.map(messenger.targets, (target) => {
+                return target.user ? generateUserInfo({ depth: `simply`, user: target.user }) : null;
+            }),
+            last: (() => {
+                const lastChat = lodash.last(chats);
+                return {
+                    last: !!lastChat,
+                    message: lastChat ? lastChat.item.message : null,
+                    uid: lastChat && lastChat.item.user ? lastChat.item.user.uid : null,
+                    profileImage: lastChat && lastChat.item.user ? lastChat.item.user.profile.image : null,
+                    nickname: lastChat && lastChat.item.user ? lastChat.item.user.nickname : null,
+                    time: lastChat && lastChat.item.user ? lastChat.item.created_at : null,
+                };
+            })(),
+            created_at: changeMysqlDate(`simply`, messenger.created_at),
+        },
+        chat: chats,
+    });
+};
+
+// 채팅 리스트(사용자 기준) - 서버 조합
+export const MessengerChatListElaborate = async (req: Request, res: Response): Promise<Response> => {
     const userId = req.app.locals.user.user_id;
     const { roomCode } = req.params;
 

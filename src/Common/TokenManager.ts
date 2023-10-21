@@ -138,6 +138,7 @@ export const tokenInfo = async ({
         status: string;
         user: {
             user_id: number;
+            uid: string;
             email: string;
             status: string;
             level: string;
@@ -155,6 +156,7 @@ export const tokenInfo = async ({
                     status: tokenInfo.status,
                     user: {
                         user_id: tokenInfo.user.id,
+                        uid: tokenInfo.user.uid,
                         email: tokenInfo.user.email,
                         status: tokenInfo.user.status,
                         level: tokenInfo.user.level,

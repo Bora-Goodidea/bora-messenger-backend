@@ -1,9 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from 'typeorm';
-
-export enum CodeTypeEnum {
-    GROUP = 'group',
-    CODE = 'code',
-}
+import { CodeTypeEnum } from '@Types/CommonTypes';
 
 @Entity()
 export class Codes extends BaseEntity {

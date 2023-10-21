@@ -102,7 +102,7 @@ export class Logger {
         const meta = { stack: error ? error.stack : '' };
         logger.error(message, error ? meta : null);
 
-        if (Config.APP_ENV !== 'production') {
+        if (Config.APP_ENV !== 'production' && Config.SIMPLY_CONSOLE_LOG !== 'true') {
             consoleLogger.info(message, meta);
         }
     }
@@ -126,7 +126,7 @@ export class Logger {
         logger.info(message, meta);
 
         /* Make sure if it safe to log this info to the console. */
-        if (Config.APP_ENV !== 'production') {
+        if (Config.APP_ENV !== 'production' && Config.SIMPLY_CONSOLE_LOG !== 'true') {
             consoleLogger.info(message, meta);
         }
     }
