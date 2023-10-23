@@ -37,13 +37,13 @@ export const RestDefaultMiddleware = async (req: Request, res: Response, next: N
 
     const baseURL = Config.PORT ? `${Config.HOSTNAME}:${Config.PORT}` : `${Config.HOSTNAME}`;
 
-    Logger.info(``, null);
-    Logger.info(`Route: ${baseURL}${req.baseUrl}${req.path}`, null);
-    Logger.info(`IP: ${req.ip}`, null);
-    Logger.info(`Method: ${req.method}`, null);
-    Logger.info(`Header: ${JSON.stringify(req.headers)}`, null);
-    Logger.info(`Body: ${JSON.stringify(req.body)}`, null);
-    Logger.info(``, null);
+    Config.SIMPLY_CONSOLE_LOG !== `true` && Logger.info(``, null);
+    Config.SIMPLY_CONSOLE_LOG !== `true` && Logger.info(`Route: ${baseURL}${req.baseUrl}${req.path}`, null);
+    Config.SIMPLY_CONSOLE_LOG !== `true` && Logger.info(`IP: ${req.ip}`, null);
+    Config.SIMPLY_CONSOLE_LOG !== `true` && Logger.info(`Method: ${req.method}`, null);
+    Config.SIMPLY_CONSOLE_LOG !== `true` && Logger.info(`Header: ${JSON.stringify(req.headers)}`, null);
+    Config.SIMPLY_CONSOLE_LOG !== `true` && Logger.info(`Body: ${JSON.stringify(req.body)}`, null);
+    Config.SIMPLY_CONSOLE_LOG !== `true` && Logger.info(``, null);
 
     next();
 };

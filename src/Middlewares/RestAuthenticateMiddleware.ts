@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { AuthenticateErrorResponse } from '@Commons/ResponseProvider';
 import { Logger } from '@Logger';
 import { tokenInfo } from '@TokenManager';
+import Config from '@Config';
 
 export const RestAuthenticateMiddleware = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const Authorization = req.header('Authorization')?.replace('Bearer ', '');
@@ -9,7 +10,7 @@ export const RestAuthenticateMiddleware = async (req: Request, res: Response, ne
         // 토큰 체크
         AuthenticateErrorResponse(res);
     } else {
-        Logger.info(`try token Info : ${Authorization}`);
+        Config.SIMPLY_CONSOLE_LOG !== `true` && Logger.info(`try token Info : ${Authorization}`);
         const tokeninfo = await tokenInfo({ token: Authorization }); // 토큰 디코딩 정보
         if (!tokeninfo.status) {
             // 토큰 디코딩 상태 체크
