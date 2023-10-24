@@ -137,7 +137,11 @@ export const timeSince = (date: Date): string => {
     ];
 
     const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
-    const interval = intervals.find((i) => i.seconds < seconds);
+    if (seconds === 0) {
+        return `방금 전`;
+    }
+
+    const interval = intervals.find((i) => i.seconds <= seconds);
 
     if (interval) {
         const count = Math.floor(seconds / interval.seconds);
