@@ -25,7 +25,6 @@ const SocketsModule = {
             cors: {
                 origin: '*',
             },
-            // path: `/chat`,
         });
 
         socketServer.use(async (socket, next) => {
@@ -35,7 +34,7 @@ const SocketsModule = {
                 Logger.error(`chat token check error:${Authorization} code(1)`);
                 next(new Error('로그인이 필요한 서비스 입니다.'));
             } else {
-                Logger.info(`try token Info : ${Authorization}`);
+                Logger.info(`chat try token Info : ${Authorization}`);
                 const tokeninfo = await tokenInfo({ token: Authorization }); // 토큰 디코딩 정보
                 if (!tokeninfo.status) {
                     // 토큰 디코딩 상태 체크
@@ -60,7 +59,7 @@ const SocketsModule = {
 
         socketServer.on('connection', async (socket) => {
             const userId = socket.userId;
-            Logger.console(`connected -> userId: ${userId} socketId: ${socket.id}`);
+            Logger.console(`SocketsModule connected --> userId: ${userId} socketId: ${socket.id}`);
 
             let userActive = null;
             if (userId) {
@@ -80,7 +79,7 @@ const SocketsModule = {
             }
 
             socket.on('create-room', async (payload: { room_code: string }) => {
-                Logger.info(`socket module create-room : ${userId} ${payload.room_code}`);
+                Logger.console(`SocketsModule create-room -> userId: ${userId} room_code: ${payload.room_code}`);
                 const room = await messengerRoomInfo({ roomCode: payload.room_code });
 
                 if (room && userId) {
@@ -92,15 +91,15 @@ const SocketsModule = {
                     );
 
                     for await (const t of JSON.parse(JSON.stringify(targets))) {
+                        Logger.console(`SocketsModule invite-room -> userId: ${userId} tartget: ${t.user_id} sid: ${t.sid}`);
                         socket.to(t.sid).emit('invite-room', generateRoomListItem({ userId: userId, room: room }));
-                        Logger.info(`socket module invite-room : ${userId} ${t.uesr_id} ${t.sid}`);
                     }
                 }
             });
 
             socket.on('join-room', (payload) => {
+                Logger.console(`SocketsModule join-room --> userId: ${userId} sid: ${payload.sid}`);
                 socket.join(payload.sid);
-                Logger.info(`socket module join-room : ${userId} ${payload.sid}`);
             });
 
             socket.on('room-send-message', async (payload: { type: string; room_code: string; contents: string }) => {
@@ -116,12 +115,12 @@ const SocketsModule = {
                         )
                     ) {
                         socket.emit('client-error', { message: Messages.error.defaultClientError });
-                        Logger.error(`socket module client-error : ${userId} ${Messages.error.defaultClientError}`);
+                        Logger.error(`SocketsModule client-error : ${userId} ${Messages.error.defaultClientError}`);
                         return;
                     }
                 } else {
                     socket.emit('client-error', { message: Messages.error.serverError });
-                    Logger.error(`socket module client-error : ${userId} ${Messages.error.serverError}`);
+                    Logger.error(`SocketsModule client-error : ${userId} ${Messages.error.serverError}`);
                     return;
                 }
 
@@ -129,7 +128,7 @@ const SocketsModule = {
 
                 if (!messenger) {
                     socket.emit('client-error', { message: Messages.common.exitsMessenger });
-                    Logger.error(`socket module client-error : ${userId} ${Messages.common.exitsMessenger}`);
+                    Logger.error(`SocketsModule client-error : ${userId} ${Messages.common.exitsMessenger}`);
                     return;
                 }
 
@@ -156,7 +155,7 @@ const SocketsModule = {
                         const newChat = generateChatItem({ userId: userId, chatData: newChatInfo });
 
                         socketServer.sockets.in(room_code).emit(`new-message`, newChat);
-                        Logger.info(`socket module new-message : ${userId} ${JSON.stringify(newChat)}`);
+                        Logger.console(`SocketsModule new-message : ${userId} ${JSON.stringify(newChat)}`);
 
                         for await (const t of lodash.filter(JSON.parse(JSON.stringify(targets)), (e) => e.user.active)) {
                             socket.to(t.user.active.sid).emit('room-new-message', {
@@ -164,8 +163,8 @@ const SocketsModule = {
                                 content: newChat.item.message,
                                 updated_at: newChat.item.created_at,
                             });
-                            Logger.info(
-                                `socket module room-new-message : ${userId} ${JSON.stringify({
+                            Logger.console(
+                                `SocketsModule room-new-message : ${userId} ${JSON.stringify({
                                     roomCode: room_code,
                                     content: newChat.item.message,
                                     updated_at: newChat.item.created_at,
@@ -174,7 +173,7 @@ const SocketsModule = {
                         }
                     } else {
                         socket.emit('client-error', { message: Messages.error.serverError });
-                        Logger.error(`socket module client-error : ${userId} ${Messages.error.serverError}`);
+                        Logger.error(`SocketsModule client-error : ${userId} ${Messages.error.serverError}`);
                         return;
                     }
                 }
@@ -182,7 +181,7 @@ const SocketsModule = {
 
             socket.on('disconnect', async () => {
                 if (userId) {
-                    Logger.info(`socket module disconnect : ${userId}`);
+                    Logger.console(`SocketsModule disconnect -->  userId: ${userId}`);
                     await userinactiveUpdate({ userId: userId });
                     const userInfo = await userDetailInfo({ user_id: userId });
                     if (userInfo) {
