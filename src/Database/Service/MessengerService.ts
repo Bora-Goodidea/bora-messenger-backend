@@ -84,7 +84,20 @@ export const messengerRoomInfo = async ({ roomCode }: { roomCode: string }): Pro
     return await messengerMasterRepository.findOne({
         select: ['id', 'user_id', 'room_code', 'updated_at', 'created_at'],
         where: { room_code: roomCode },
-        relations: ['targets.user.profile.media', 'targets.user.active', 'chat'],
+        relations: ['targets.user.profile.media', 'targets.user.active', 'chat.checked'],
+        order: { updated_at: 'DESC' },
+    });
+};
+
+/**
+ * 방정보 조회
+ * @param roomCode
+ */
+export const messengerRoomInfonyId = async ({ roomid }: { roomid: number }): Promise<MessengerMaster | null> => {
+    return await messengerMasterRepository.findOne({
+        select: ['id', 'user_id', 'room_code', 'updated_at', 'created_at'],
+        where: { id: roomid },
+        relations: ['targets.user.profile.media', 'targets.user.active', 'chat.checked'],
         order: { updated_at: 'DESC' },
     });
 };
@@ -97,7 +110,7 @@ export const messengerBaseTargetRoomList = async ({ userId }: { userId: number }
     return await messengerTargetRepository.find({
         select: ['id', 'room_id', 'user_id'],
         where: { user_id: userId },
-        relations: ['room.targets.user.profile.media', 'room.chat'],
+        relations: ['room.targets.user.profile.media', 'room.chat.checked'],
     });
 };
 
@@ -178,7 +191,7 @@ export const messengerChartOne = async ({ roomId, chatId }: { roomId: number; ch
  */
 export const messengerChartInfoByChatCode = async ({ chat_code }: { chat_code: string }): Promise<MessengerChat | null> => {
     return await messengerChatRepository.findOne({
-        select: ['id', 'user_id', 'target_id', 'chat_code', 'message_type', 'message', 'created_at'],
+        select: ['id', 'room_id', 'user_id', 'target_id', 'chat_code', 'message_type', 'message', 'created_at'],
         where: { chat_code: chat_code },
     });
 };

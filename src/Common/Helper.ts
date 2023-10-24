@@ -288,6 +288,13 @@ export const generateRoomListItem = ({ userId, room }: { userId: number; room: M
             content: lastChat ? lastChat.message : '',
             updated_at: lastChat ? changeMysqlDate(`simply`, lastChat.created_at) : null,
         },
+        checked: (() => {
+            if (lastChat) {
+                return lodash.find(lastChat.checked, { user_id: userId }) ? 'Y' : 'N';
+            } else {
+                return 'Y';
+            }
+        })(),
         created_at: changeMysqlDate(`simply`, room.created_at),
         updated_at: changeMysqlDate(`simply`, room.updated_at),
     };

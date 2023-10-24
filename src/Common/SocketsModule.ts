@@ -171,6 +171,7 @@ const SocketsModule = {
                             Logger.console(
                                 `SocketsModule room-new-message : ${userId} ${JSON.stringify({
                                     roomCode: room_code,
+                                    checked: newChat.item.checked,
                                     content: newChat.item.message,
                                     updated_at: newChat.item.created_at,
                                 })}`,

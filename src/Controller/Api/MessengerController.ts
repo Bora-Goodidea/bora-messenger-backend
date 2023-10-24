@@ -18,6 +18,7 @@ import {
     messengerMasterChange,
     messengerMasterDelete,
     messengerChatDelete,
+    messengerRoomInfonyId,
 } from '@Service/MessengerService';
 import Messages from '@Messages';
 import {
@@ -81,20 +82,8 @@ export const MessengerRoomList = async (req: Request, res: Response): Promise<Re
     return SuccessResponse(
         res,
         lodash.map(roomListTask, (room) => {
-            const lastChat = lodash.last(room.chat);
-
-            return {
-                room_code: room.room_code,
-                target: lodash.map(room.targets, (target) => {
-                    return target.user ? generateUserInfo({ depth: `simply`, user: target.user }) : null;
-                }),
-                chart: {
-                    content: lastChat ? lastChat.message : '',
-                    updated_at: lastChat ? changeMysqlDate(`simply`, lastChat.created_at) : null,
-                },
-                created_at: changeMysqlDate(`simply`, room.created_at),
-                updated_at: changeMysqlDate(`simply`, room.updated_at),
-            };
+            console.debug(room);
+            return generateRoomListItem({ userId: userId, room: room });
         }),
     );
 };
@@ -307,6 +296,7 @@ export const MessengerChatChecked = async (req: Request, res: Response): Promise
     const { chart: chartCodes } = req.body;
 
     const chatIdList: Array<number> = []; // 방 타겟 리스트
+    let roomId: null | number = null;
 
     // 채팅 체크
     for await (const chartCode of chartCodes) {
@@ -315,6 +305,7 @@ export const MessengerChatChecked = async (req: Request, res: Response): Promise
             return ClientErrorResponse(res, Messages.common.exitsChat);
         }
         chatIdList.push(char.id);
+        roomId = char.room_id;
     }
 
     // 신규 메시지 등록시 등록한 checked 정보를 삭제 처리
@@ -325,8 +316,11 @@ export const MessengerChatChecked = async (req: Request, res: Response): Promise
         }
     }
 
+    const roomInfo = roomId ? await messengerRoomInfonyId({ roomid: roomId }) : null;
+
     return SuccessResponse(res, {
         chart_code: chartCodes,
+        room: roomInfo ? generateRoomListItem({ userId: userId, room: roomInfo }) : null,
     });
 };
 

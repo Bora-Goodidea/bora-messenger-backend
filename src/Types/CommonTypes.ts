@@ -134,6 +134,7 @@ export interface CommongenerateRoomListItemInterface {
         content: string;
         updated_at: CommonChangeMysqlDateInterface | null;
     };
+    checked: string | 'Y' | 'N';
     created_at: CommonChangeMysqlDateInterface;
     updated_at: CommonChangeMysqlDateInterface;
 }
