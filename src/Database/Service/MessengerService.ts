@@ -176,10 +176,10 @@ export const messengerChartOne = async ({ roomId, chatId }: { roomId: number; ch
  * @param userId
  * @param chat_code
  */
-export const messengerChartInfoByChatCode = async ({ userId, chat_code }: { userId: number; chat_code: string }): Promise<MessengerChat | null> => {
+export const messengerChartInfoByChatCode = async ({ chat_code }: { chat_code: string }): Promise<MessengerChat | null> => {
     return await messengerChatRepository.findOne({
         select: ['id', 'user_id', 'target_id', 'chat_code', 'message_type', 'message', 'created_at'],
-        where: { chat_code: chat_code, user_id: userId },
+        where: { chat_code: chat_code },
     });
 };
 
@@ -202,11 +202,15 @@ export const messengerChartCheckedExists = async ({ userId, chatId }: { userId: 
  * @param userId
  * @param chatId
  */
-export const messengerChartChecked = async ({ userId, chatId }: { userId: number; chatId: number }): Promise<MessengerChatChecked> => {
+export const messengerChartCheckedCreate = async ({ userId, chatId }: { userId: number; chatId: number }): Promise<MessengerChatChecked> => {
     return await MessengerChatCheckedRepository.save({
         chat_id: chatId,
         user_id: userId,
     });
+};
+
+export const messengerChartCheckedDelete = async ({ checkedId, userId }: { checkedId: number; userId: number }): Promise<DeleteResult> => {
+    return await MessengerChatCheckedRepository.delete({ id: checkedId, user_id: userId });
 };
 
 /**
@@ -233,20 +237,20 @@ export const messengerChartCreate = async ({
     userId,
     targetId,
     chatCode,
-    chatId,
+    roomId,
     messageType,
     message,
 }: {
     userId: number;
     targetId: number;
     chatCode: string;
-    chatId: number;
+    roomId: number;
     messageType: string;
     message: string;
 }): Promise<MessengerChat> => {
     return await messengerChatRepository.save(
         {
-            room_id: chatId,
+            room_id: roomId,
             chat_code: chatCode,
             user_id: userId,
             target_id: targetId,

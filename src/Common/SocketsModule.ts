@@ -12,6 +12,7 @@ import {
     messengerChartOne,
     userinactiveUpdate,
     messengerRoomInfo,
+    messengerChartCheckedCreate,
 } from '@Service/MessengerService';
 import lodash from 'lodash';
 import Codes from '@Codes';
@@ -142,7 +143,7 @@ const SocketsModule = {
                     }
 
                     const newTask = await messengerChartCreate({
-                        chatId: messenger.id,
+                        roomId: messenger.id,
                         chatCode: newChatCode,
                         userId: userId,
                         targetId: targetId,
@@ -150,9 +151,13 @@ const SocketsModule = {
                         message: contents,
                     });
 
+                    // 읽을 확인해 나 자신은 등록
+                    await messengerChartCheckedCreate({ chatId: newTask.id, userId: userId });
+
                     const newChatInfo = await messengerChartOne({ roomId: messenger.id, chatId: newTask.id });
                     if (newChatInfo) {
                         const newChat = generateChatItem({ userId: userId, chatData: newChatInfo });
+                        console.debug(newChat);
 
                         socketServer.sockets.in(room_code).emit(`new-message`, newChat);
                         Logger.console(`SocketsModule new-message : ${userId} ${JSON.stringify(newChat)}`);

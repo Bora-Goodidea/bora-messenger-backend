@@ -9,7 +9,7 @@ import {
     messengerRoomInfoByRoomCode,
     messengerChartList,
     messengerChartInfoByChatCode,
-    messengerChartChecked,
+    messengerChartCheckedCreate,
     messengerChartCheckedExists,
     messengerChartTargets,
     messengerChartCreate,
@@ -310,17 +310,18 @@ export const MessengerChatChecked = async (req: Request, res: Response): Promise
 
     // 채팅 체크
     for await (const chartCode of chartCodes) {
-        const char = await messengerChartInfoByChatCode({ userId: userId, chat_code: chartCode });
+        const char = await messengerChartInfoByChatCode({ chat_code: chartCode });
         if (!char) {
             return ClientErrorResponse(res, Messages.common.exitsChat);
         }
         chatIdList.push(char.id);
     }
 
+    // 신규 메시지 등록시 등록한 checked 정보를 삭제 처리
     for await (const chatId of chatIdList) {
         const ch = await messengerChartCheckedExists({ userId: userId, chatId: chatId });
         if (!ch) {
-            await messengerChartChecked({ userId: userId, chatId: chatId });
+            await messengerChartCheckedCreate({ chatId: chatId, userId: userId });
         }
     }
 
@@ -367,7 +368,7 @@ export const MessengerChatCreate = async (req: Request, res: Response): Promise<
         // 임시 대상이 있으면 등록 없으면 자신을 대상으로 등록
         if (lastTarget) {
             await messengerChartCreate({
-                chatId: messenger.id,
+                roomId: messenger.id,
                 chatCode: chatCode,
                 userId: userId,
                 targetId: lastTarget.user_id,
@@ -376,7 +377,7 @@ export const MessengerChatCreate = async (req: Request, res: Response): Promise<
             });
         } else {
             await messengerChartCreate({
-                chatId: messenger.id,
+                roomId: messenger.id,
                 chatCode: chatCode,
                 userId: userId,
                 targetId: userId,
@@ -386,7 +387,7 @@ export const MessengerChatCreate = async (req: Request, res: Response): Promise<
         }
     } else {
         await messengerChartCreate({
-            chatId: messenger.id,
+            roomId: messenger.id,
             chatCode: chatCode,
             userId: userId,
             targetId: userId,
