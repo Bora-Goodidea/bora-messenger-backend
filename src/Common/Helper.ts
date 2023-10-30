@@ -286,6 +286,7 @@ export const generateRoomListItem = ({ userId, room }: { userId: number; room: M
         ),
         chart: {
             content: lastChat ? lastChat.message : '',
+            type: lastChat ? lastChat.message_type : '',
             updated_at: lastChat ? changeMysqlDate(`simply`, lastChat.created_at) : null,
         },
         checked: (() => {

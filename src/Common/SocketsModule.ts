@@ -207,6 +207,7 @@ const SocketsModule = {
                             socket.to(t.user.active.sid).emit('room-new-message', {
                                 roomCode: room_code,
                                 content: newChat.item.message,
+                                type: newChat.item.message_type,
                                 updated_at: newChat.item.created_at,
                             });
                             Logger.console(
@@ -214,6 +215,7 @@ const SocketsModule = {
                                     roomCode: room_code,
                                     checked: newChat.item.checked,
                                     content: newChat.item.message,
+                                    type: newChat.item.message_type,
                                     updated_at: newChat.item.created_at,
                                 })}`,
                             );

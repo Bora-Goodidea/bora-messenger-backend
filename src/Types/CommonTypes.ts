@@ -132,6 +132,7 @@ export interface CommongenerateRoomListItemInterface {
     target: Array<CommonUserInfoInterface | null> | null;
     chart: {
         content: string;
+        type: string;
         updated_at: CommonChangeMysqlDateInterface | null;
     };
     checked: string | 'Y' | 'N';
