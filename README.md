@@ -5,12 +5,13 @@
 <img src="https://img.shields.io/badge/nodedotjs-61DAFB?style=for-the-badge&logo=nodedotjs&logoColor=black" alt="...">
 <img src="https://img.shields.io/badge/typescript-1572B6?style=for-the-badge&logo=typescript&logoColor=black" alt="...">
 <img src="https://img.shields.io/badge/express-1572B6?style=for-the-badge&logo=express&logoColor=black" alt="...">
+<br />
 <img src="https://img.shields.io/badge/socket.io-1572B6?style=for-the-badge&logo=socket.io&logoColor=white" alt="...">
 <img src="https://img.shields.io/badge/typeorm-1572B6?style=for-the-badge&logo=quora&logoColor=white" alt="...">
 <img src="https://img.shields.io/badge/mysql-1572B6?style=for-the-badge&logo=mysql&logoColor=black" alt="...">
 <img src="https://img.shields.io/badge/babel-1572B6?style=for-the-badge&logo=babel&logoColor=black" alt="...">
 
-<br>
+<br />
 </div>
 <br />
 
