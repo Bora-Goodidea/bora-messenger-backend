@@ -1,5 +1,27 @@
 ## bora-messenger-backend
 
+
+<div style="text-align: center;"><h4>📚 STACKS</h4></div>
+
+<div style="text-align: center;">
+<img src="https://img.shields.io/badge/javascript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="...">
+<img src="https://img.shields.io/badge/nodedotjs-61DAFB?style=for-the-badge&logo=nodedotjs&logoColor=black" alt="...">
+<img src="https://img.shields.io/badge/typescript-1572B6?style=for-the-badge&logo=typescript&logoColor=black" alt="...">
+<img src="https://img.shields.io/badge/express-1572B6?style=for-the-badge&logo=express&logoColor=black" alt="...">
+<img src="https://img.shields.io/badge/socket.io-1572B6?style=for-the-badge&logo=socket.io&logoColor=white" alt="...">
+<img src="https://img.shields.io/badge/typeorm-1572B6?style=for-the-badge&logo=quora&logoColor=white" alt="...">
+<img src="https://img.shields.io/badge/mysql-1572B6?style=for-the-badge&logo=mysql&logoColor=black" alt="...">
+<img src="https://img.shields.io/badge/babel-1572B6?style=for-the-badge&logo=babel&logoColor=black" alt="...">
+
+<br>
+</div>
+<br />
+
+<div style="text-align: center;">
+    <h1 style="text-align: center;">BoraMessenger Back-End</h1>
+</div>
+
+
 ### 초기 설정 참고
 
 > [Setting up Node JS, Express, Prettier, ESLint and Husky Application with Babel and Typescript: Part 1](https://dev.to/mkabumattar/setting-up-node-js-express-prettier-eslint-and-husky-application-with-babel-and-typescript-part-1-2ple).
