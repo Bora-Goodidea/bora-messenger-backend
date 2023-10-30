@@ -51,6 +51,7 @@ const SocketsModule = {
                             next(new Error('로그인이 필요한 서비스 입니다.'));
                         } else {
                             socket.userId = tokeninfo.token.user.user_id;
+                            socket.userUid = tokeninfo.token.user.uid;
                             next();
                         }
                     }
@@ -60,6 +61,7 @@ const SocketsModule = {
 
         socketServer.on('connection', async (socket) => {
             const userId = socket.userId;
+            const userUid = socket.userUid;
             Logger.console(`SocketsModule connected --> userId: ${userId} socketId: ${socket.id}`);
 
             let userActive = null;
@@ -96,6 +98,46 @@ const SocketsModule = {
                         socket.to(t.sid).emit('invite-room', generateRoomListItem({ userId: userId, room: room }));
                     }
                 }
+            });
+
+            socket.on('send-bubble-start', async (payload: { room_code: string }) => {
+                Logger.console(`SocketsModule send-bubble-start --> userId: ${userId} sid: ${payload.room_code}`);
+                const room = await messengerRoomInfo({ roomCode: payload.room_code });
+                if (room && userId) {
+                    const targets = lodash.filter(
+                        lodash.map(room.targets, (t) => {
+                            return t.user && t.user.active && t.user.active.sid ? { user_id: t.user_id, sid: t.user.active.sid } : null;
+                        }),
+                        (e) => e,
+                    );
+
+                    for await (const t of JSON.parse(JSON.stringify(targets))) {
+                        Logger.console(`SocketsModule room-bubble-start -> userId: ${userId} tartget: ${t.user_id} sid: ${t.sid}`);
+                        socket.to(t.sid).emit('room-bubble-start', { roomCode: payload.room_code, uid: userUid });
+                    }
+                }
+            });
+
+            socket.on('send-bubble-end', async (payload: { room_code: string }) => {
+                Logger.console(`SocketsModule send-bubble-start --> userId: ${userId} sid: ${payload.room_code}`);
+                const room = await messengerRoomInfo({ roomCode: payload.room_code });
+                if (room && userId) {
+                    const targets = lodash.filter(
+                        lodash.map(room.targets, (t) => {
+                            return t.user && t.user.active && t.user.active.sid ? { user_id: t.user_id, sid: t.user.active.sid } : null;
+                        }),
+                        (e) => e,
+                    );
+
+                    for await (const t of JSON.parse(JSON.stringify(targets))) {
+                        Logger.console(`SocketsModule invite-room -> userId: ${userId} tartget: ${t.user_id} sid: ${t.sid}`);
+                        socket.to(t.sid).emit('room-bubble-end', { roomCode: payload.room_code, uid: userUid });
+                    }
+                }
+            });
+
+            socket.on('send-bubble-end', async (payload: { room_code: string }) => {
+                Logger.console(`SocketsModule send-bubble-end --> userId: ${userId} sid: ${payload.room_code}`);
             });
 
             socket.on('join-room', (payload) => {
@@ -157,7 +199,6 @@ const SocketsModule = {
                     const newChatInfo = await messengerChartOne({ roomId: messenger.id, chatId: newTask.id });
                     if (newChatInfo) {
                         const newChat = generateChatItem({ userId: userId, chatData: newChatInfo });
-                        console.debug(newChat);
 
                         socketServer.sockets.in(room_code).emit(`new-message`, newChat);
                         Logger.console(`SocketsModule new-message : ${userId} ${JSON.stringify(newChat)}`);
