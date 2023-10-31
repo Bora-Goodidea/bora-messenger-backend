@@ -1,4 +1,6 @@
+<p style="align-content: center">
 <div style="text-align: center;"><h4>📚 STACKS</h4></div>
+
 
 <div style="text-align: center;">
 <img src="https://img.shields.io/badge/javascript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="...">
@@ -18,7 +20,7 @@
 <div style="text-align: center;">
     <h1 style="text-align: center;">BoraMessenger Back-End</h1>
 </div>
-
+</p>
 
 ### 초기 설정 참고
 
