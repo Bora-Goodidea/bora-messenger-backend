@@ -3,7 +3,7 @@ import { ClientErrorResponse, SuccessDefault, SuccessResponse } from '@Commons/R
 import _ from 'lodash';
 import bcrypt from 'bcrypt';
 import Messages from '@Messages';
-import { emailValidator, generateUUID } from '@Helper';
+import { emailValidator, generateUserInfo, generateUUID } from '@Helper';
 import {
     emailExists,
     nickNameExists,
@@ -13,6 +13,7 @@ import {
     getUserByEmail,
     changePassword,
     createDefaultProfile,
+    getUserProfile,
 } from '@Database/Service/UserService';
 import { emailAuthSave, getData, authentication } from '@Service/EmailAuthService';
 import { createPasswordReset, getPasswordResetInfo, passwordResetCompleted } from '@Service/AuthService';
@@ -158,7 +159,7 @@ export const Login = async (req: Request, res: Response): Promise<Response> => {
             const checkPassword = await bcrypt.compare(password, findUser.password);
             if (checkPassword) {
                 const genToken = await generateLoginToken({ user_id: findUser.id, email: email });
-                return SuccessResponse(res, { uid: findUser.uid, access_token: genToken.accessToken, refresh_token: genToken.refreshToken });
+                return SuccessResponse(res, { access_token: genToken.accessToken, refresh_token: genToken.refreshToken });
             } else {
                 return ClientErrorResponse(res, Messages.auth.login.checkPassword);
             }
@@ -312,12 +313,15 @@ export const PasswordChange = async (req: Request, res: Response): Promise<Respo
 
 // 토큰 정보
 export const TokenInfo = async (req: Request, res: Response): Promise<Response> => {
-    const { email, uid, status, level } = req.app.locals.user;
+    const { uid, user_id } = req.app.locals.user;
+
+    const user = await getUserProfile({ user_id: user_id });
+    const profile = user ? generateUserInfo({ depth: `detail`, user: user }) : null;
+
     return SuccessResponse(res, {
-        email: email,
         uid: uid,
-        status: status,
-        level: level,
+        profileImage: profile ? profile.profile.image : ``,
+        nickname: profile ? profile.nickname : ``,
     });
 };
 
