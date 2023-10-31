@@ -13,7 +13,7 @@ import lodash from 'lodash';
 import Messages from '@Commons/Messages';
 import { mediaExits } from '@Database/Service/MediaService';
 import { Logger } from '@Commons/Logger';
-import { generateUserInfo } from '@Helper';
+import { changeMysqlDate, generateUserInfo } from '@Helper';
 
 // 내 프로필
 export const MyProfile = async (req: Request, res: Response): Promise<Response> => {
@@ -95,6 +95,7 @@ export const YourProfile = async (req: Request, res: Response): Promise<Response
                 id: infoTask.profile.profile_image_id,
                 url: `${Config.MEDIA_HOSTNAME}${infoTask.profile.media.path}/${infoTask.profile.media?.filename}`,
             },
+            active: infoTask.active ? changeMysqlDate(`simply`, infoTask.active.updated_at).sinceString : `알수 없음`,
         });
     } else {
         return ClientErrorResponse(res);

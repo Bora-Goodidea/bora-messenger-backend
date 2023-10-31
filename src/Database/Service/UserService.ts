@@ -234,6 +234,6 @@ export const getUserProfileByProfileUid = async ({ uid }: { uid: string }): Prom
     return await userRepository.findOne({
         select: [`id`, `email`, 'nickname'],
         where: { uid: uid },
-        relations: ['profile', 'profile.media'],
+        relations: ['profile', 'profile.media', 'active'],
     });
 };

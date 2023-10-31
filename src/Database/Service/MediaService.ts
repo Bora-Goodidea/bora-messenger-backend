@@ -1,7 +1,7 @@
-import AppDataSource from '@Database/AppDataSource'
-import { Media } from '@Entity/Media'
+import AppDataSource from '@Database/AppDataSource';
+import { Media } from '@Entity/Media';
 
-const mediaRepository = AppDataSource.getRepository(Media)
+const mediaRepository = AppDataSource.getRepository(Media);
 
 /**
  * 파일 등록
@@ -20,12 +20,12 @@ export const mediaCreate = async ({
     origin_name,
     size,
 }: {
-    user_id: number
-    type: string
-    path: string
-    filename: string
-    origin_name: string
-    size: number
+    user_id: number;
+    type: string;
+    path: string;
+    filename: string;
+    origin_name: string;
+    size: number;
 }): Promise<Media> => {
     return mediaRepository.save(
         {
@@ -37,11 +37,16 @@ export const mediaCreate = async ({
             size: size,
         },
         { transaction: false, data: false },
-    )
-}
+    );
+};
 
+/**
+ * media file 존재 확인 ( 사용자 정보 포함 )
+ * @param id
+ * @param user_id
+ */
 export const mediaExits = async ({ id, user_id }: { id: number; user_id: number }): Promise<number> => {
-    const task = await mediaRepository.find({ select: ['id'], where: { id: id, user_id: user_id } })
+    const task = await mediaRepository.find({ select: ['id'], where: { id: id, user_id: user_id } });
 
-    return task.length
-}
+    return task.length;
+};
