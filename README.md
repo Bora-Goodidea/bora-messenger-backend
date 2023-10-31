@@ -1,4 +1,4 @@
-<p style="align-content: center">
+<div align="center">
 <div style="text-align: center;"><h4>📚 STACKS</h4></div>
 
 
@@ -20,7 +20,7 @@
 <div style="text-align: center;">
     <h1 style="text-align: center;">BoraMessenger Back-End</h1>
 </div>
-</p>
+</div>
 
 ### 초기 설정 참고
 
