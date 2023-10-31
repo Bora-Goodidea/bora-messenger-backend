@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner, Table, TableForeignKey } from 'typeorm';
 
-export class Profile1686381353733 implements MigrationInterface {
+export class Profile1695044533712 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.createTable(
             new Table({
@@ -21,7 +21,7 @@ export class Profile1686381353733 implements MigrationInterface {
                     {
                         name: 'profile_image_id',
                         type: 'int',
-                        isNullable: false,
+                        isNullable: true,
                     },
                     {
                         name: 'updated_at',
@@ -52,7 +52,7 @@ export class Profile1686381353733 implements MigrationInterface {
                 columnNames: ['profile_image_id'],
                 referencedTableName: 'media',
                 referencedColumnNames: ['id'],
-                onDelete: 'SET DEFAULT',
+                // onDelete: 'SET DEFAULT',
                 onUpdate: 'CASCADE',
             }),
         );
