@@ -60,6 +60,12 @@ console.debug(`#################################################################
             exit();
         }
 
+        const [mediaUpdateResult] = await conn.query(`update media set user_id = ${insertId} where id = ${count + 1} `);
+        if (!mediaUpdateResult) {
+            Logger.error(`${count} ${loop} ${email} media update error...`);
+            exit();
+        }
+
         Logger.info(`${count} ${loop} ${email} success........`);
     }
 
