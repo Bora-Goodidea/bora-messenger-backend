@@ -217,7 +217,7 @@ export const PasswordReset = async (req: Request, res: Response): Promise<Respon
         resetCode: resetCode,
     });
 
-    if (Config.APP_ENV === 'production' || Config.APP_ENV === 'development') {
+    if (Config.APP_ENV !== 'local') {
         MailSender.SendPasswordReset({
             ToEmail: resetEmail,
             ResetCode: resetCode,
@@ -232,7 +232,7 @@ export const PasswordReset = async (req: Request, res: Response): Promise<Respon
             : `${Config.FRONT_HOST}/auth/${resetCode}/password-change`,
     };
 
-    if (Config.APP_ENV === 'development') {
+    if (Config.APP_ENV !== 'local') {
         delete payload.resetcode;
         delete payload.resetlink;
     }
